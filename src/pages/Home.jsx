@@ -8,10 +8,10 @@ const Home = () => {
   return (
     <Box sx={{ textAlign: 'center', mt: 4 }}>
       <Typography variant="h2" gutterBottom>
-        Welcome to AI Yoga Assistant
+      Love and compassion are necessities, not luxuries.
       </Typography>
       <Typography variant="h5" gutterBottom sx={{ mb: 4 }}>
-        Your personal guide to perfect yoga poses
+      "It is under the greatest adversity that there exists the greatest potential for doing good, both for oneself and others.
       </Typography>
       <Button 
         variant="contained" 

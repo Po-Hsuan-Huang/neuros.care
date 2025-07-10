@@ -17,7 +17,7 @@ const Layout = ({ children }) => {
       <AppBar position="fixed">
         <Toolbar>
           <Typography variant="h6" noWrap component="div">
-            AI Yoga Assistant
+            Neuros, train your brain with AI.
           </Typography>
         </Toolbar>
       </AppBar>

@@ -1,67 +1,139 @@
+// Import necessary libraries from React and other packages.
+// React is the core library for building the user interface.
+// useEffect is a React Hook that lets you perform side effects in function components (like data fetching, subscriptions, or manually changing the DOM).
+// useRef is a React Hook that lets you reference a value that's not needed for rendering. Here, it's used to get direct access to the <video> and <canvas> DOM elements.
 import React, { useEffect, useRef } from 'react';
+
+// Import the Box component from Material-UI for easy styling and layout.
 import { Box } from '@mui/material';
+
+// Import the pose-detection library from TensorFlow.js, which allows us to detect human poses in images and videos.
 import * as poseDetection from '@tensorflow-models/pose-detection';
 
+// Define a React functional component called WebcamStream.
+// It takes a prop called `onPoseDetected`, which is a function that will be called whenever a new pose is detected.
 const WebcamStream = ({ onPoseDetected }) => {
+  // Create a `ref` for the video element. This allows us to directly access the video element in the DOM to do things like setting its source.
   const videoRef = useRef(null);
+  // Create a `ref` for the canvas element. This is used to draw the detected pose skeleton on top of the video feed.
   const canvasRef = useRef(null);
 
+  // The `useEffect` Hook runs after the component mounts (is added to the screen).
+  // It's used here to set up the webcam, initialize the pose detector, and start the pose detection loop.
+  // The empty dependency array `[]` at the end would mean this effect runs only once. However, `[onPoseDetected]` means it will re-run if the `onPoseDetected` function changes.
   useEffect(() => {
+    // Declare variables to hold the pose detector and the animation frame ID.
     let detector;
     let animationFrame;
 
+    // This asynchronous function initializes the MoveNet pose detection model from TensorFlow.js.
     const initializeDetector = async () => {
+      // `createDetector` loads the pre-trained MoveNet model, which is efficient and good for real-time applications.
       detector = await poseDetection.createDetector(
         poseDetection.SupportedModels.MoveNet
       );
     };
 
+    // This asynchronous function sets up the user's webcam.
     const setupWebcam = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: false,
-      });
-      videoRef.current.srcObject = stream;
+      try {
+        // `navigator.mediaDevices.getUserMedia` prompts the user for permission to use their camera.
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true, // We want video
+          audio: false, // We don't need audio
+        });
+        // If the `videoRef` is attached to the <video> element, set its `srcObject` to the webcam stream to display the feed.
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          // Wait for the video to start playing before detecting poses.
+          videoRef.current.onloadedmetadata = () => {
+            // Set the canvas dimensions to match the video dimensions.
+            if (canvasRef.current && videoRef.current) {
+                canvasRef.current.width = videoRef.current.videoWidth;
+                canvasRef.current.height = videoRef.current.videoHeight;
+            }
+            detectPose(); // Start detecting poses once the video is ready.
+          };
+        }
+      } catch (err) {
+        console.error("Error accessing webcam: ", err);
+      }
     };
 
+    // This asynchronous function continuously detects poses from the webcam feed.
     const detectPose = async () => {
-      if (!detector || !videoRef.current) return;
+      // Ensure the detector is loaded and the video element is available before proceeding.
+      if (!detector || !videoRef.current || videoRef.current.readyState < 3) {
+          animationFrame = requestAnimationFrame(detectPose);
+          return;
+      };
 
+      // `estimatePoses` is the core function from the TensorFlow.js model that analyzes the current video frame and returns an array of detected poses.
       const poses = await detector.estimatePoses(videoRef.current);
+
+      // If at least one pose is detected...
       if (poses.length > 0) {
+        // Call the `onPoseDetected` function that was passed in as a prop, sending the first detected pose's data to the parent component.
         onPoseDetected(poses[0]);
+        // Draw the detected pose on the canvas to provide visual feedback.
         drawPose(poses[0]);
       }
 
+      // `requestAnimationFrame` tells the browser to run `detectPose` again before the next repaint. This creates a smooth, continuous loop for real-time detection without performance issues.
       animationFrame = requestAnimationFrame(detectPose);
     };
 
+    // This function draws the detected pose onto the canvas.
     const drawPose = (pose) => {
+      // Get the 2D drawing context for the canvas.
       const ctx = canvasRef.current.getContext('2d');
-      // Draw skeleton and keypoints
-      // Implementation details...
+      // Clear the canvas before drawing the new pose to avoid smearing.
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+
+      // `pose.keypoints` is an array of points on the body (e.g., nose, left_shoulder, right_knee).
+      // Here you would add your drawing logic to draw dots for keypoints and lines for the skeleton.
+      // Example: Draw a circle for each keypoint.
+      for (const keypoint of pose.keypoints) {
+          if (keypoint.score > 0.5) { // Only draw keypoints with a high confidence score.
+              ctx.beginPath();
+              ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI);
+              ctx.fillStyle = 'red';
+              ctx.fill();
+          }
+      }
     };
 
+    // Call the setup functions when the component mounts.
     initializeDetector();
     setupWebcam();
 
+    // This is the cleanup function. It runs when the component unmounts (is removed from the screen).
+    // It's crucial for stopping the animation loop to prevent memory leaks and unnecessary processing.
     return () => {
       cancelAnimationFrame(animationFrame);
+      // You might also want to stop the webcam stream here.
+      if (videoRef.current && videoRef.current.srcObject) {
+          const tracks = videoRef.current.srcObject.getTracks();
+          tracks.forEach(track => track.stop());
+      }
     };
-  }, [onPoseDetected]);
+  }, [onPoseDetected]); // The dependency array for the useEffect hook.
 
+  // The JSX returned by the component. This is what gets rendered to the screen.
   return (
-    <Box sx={{ position: 'relative' }}>
+    // The Box component acts as a container. `position: 'relative'` is important so the canvas can be positioned absolutely within it.
+    <Box sx={{ position: 'relative', width: '640px', height: '480px' }}>
       <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        style={{ width: '100%', height: 'auto' }}
+        ref={videoRef} // Attach the ref to the video element.
+        autoPlay // The video will start playing as soon as it can.
+        playsInline // Important for playback on mobile browsers.
+        muted // Mute the video to allow autoplay in most browsers.
+        style={{ width: '100%', height: '100%' }}
       />
       <canvas
-        ref={canvasRef}
+        ref={canvasRef} // Attach the ref to the canvas element.
         style={{
-          position: 'absolute',
+          position: 'absolute', // Position the canvas directly on top of the video.
           top: 0,
           left: 0,
           width: '100%',
@@ -72,4 +144,5 @@ const WebcamStream = ({ onPoseDetected }) => {
   );
 };
 
+// Export the component so it can be used in other parts of the application.
 export default WebcamStream;

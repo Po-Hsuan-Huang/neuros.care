@@ -5,7 +5,7 @@ const Progress = () => {
   return (
     <Box>
       <Typography variant="h4">Progress</Typography>
-      {/* Add progress tracking content here */}
+      Add progress tracking content here
     </Box>
   );
 };

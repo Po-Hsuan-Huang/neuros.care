@@ -5,7 +5,7 @@ const Profile = () => {
   return (
     <Box>
       <Typography variant="h4">Profile</Typography>
-      {/* Add profile content here */}
+      Add profile content here
     </Box>
   );
 };

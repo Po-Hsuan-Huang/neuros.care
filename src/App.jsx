@@ -4,9 +4,9 @@ import { ThemeProvider } from '@mui/material';
 import { theme } from './theme';
 import Layout from './components/Layout';
 import Home from './pages/Home';
-// import YogaSession from './pages/YogaSession';
-// import Profile from './pages/Profile';
-// import Progress from './pages/Progress';
+import YogaSession from './pages/YogaSession';
+import Profile from './pages/Profile';
+import Progress from './pages/Progress';
 
 function App() {
   return (
@@ -15,9 +15,9 @@ function App() {
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
-            {/* <Route path="/session" element={<YogaSession />} />
+            <Route path="/session" element={<YogaSession />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/progress" element={<Progress />} /> */}
+            <Route path="/progress" element={<Progress />} /> 
           </Routes>
         </Layout>
       </BrowserRouter>
