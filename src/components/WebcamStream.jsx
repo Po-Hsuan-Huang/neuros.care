@@ -2,22 +2,27 @@
 // React is the core library for building the user interface.
 // useEffect is a React Hook that lets you perform side effects in function components (like data fetching, subscriptions, or manually changing the DOM).
 // useRef is a React Hook that lets you reference a value that's not needed for rendering. Here, it's used to get direct access to the <video> and <canvas> DOM elements.
-import React, { useEffect, useRef } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
+import * as tf from '@tensorflow/tfjs';
 
 // Import the Box component from Material-UI for easy styling and layout.
 import { Box } from '@mui/material';
 
 // Import the pose-detection library from TensorFlow.js, which allows us to detect human poses in images and videos.
 import * as poseDetection from '@tensorflow-models/pose-detection';
+import '@tensorflow/tfjs-backend-webgl'; // Import the WebGL backend for better performance
 
 // Define a React functional component called WebcamStream.
 // It takes a prop called `onPoseDetected`, which is a function that will be called whenever a new pose is detected.
 const WebcamStream = ({ onPoseDetected }) => {
-  // Create a `ref` for the video element. This allows us to directly access the video element in the DOM to do things like setting its source.
-  const videoRef = useRef(null);
-  // Create a `ref` for the canvas element. This is used to draw the detected pose skeleton on top of the video feed.
-  const canvasRef = useRef(null);
-
+    const videoRef = useRef(null);
+    const canvasRef = useRef(null);
+    const detectorRef = useRef(null); // To store the pose detector instance
+    const animationFrameIdRef = useRef(null); // To store the animation frame ID for cleanup
+    const [isTensorflowReady, setIsTensorflowReady] = useState(false);
+    const [isDetectorLoading, setIsDetectorLoading] = useState(true);
+    const [error, setError] = useState(null);
+  
   // The `useEffect` Hook runs after the component mounts (is added to the screen).
   // It's used here to set up the webcam, initialize the pose detector, and start the pose detection loop.
   // The empty dependency array `[]` at the end would mean this effect runs only once. However, `[onPoseDetected]` means it will re-run if the `onPoseDetected` function changes.
@@ -26,12 +31,41 @@ const WebcamStream = ({ onPoseDetected }) => {
     let detector;
     let animationFrame;
 
-    // This asynchronous function initializes the MoveNet pose detection model from TensorFlow.js.
+      // 1. Initialize TensorFlow.js and the Pose Detector
+
     const initializeDetector = async () => {
-      // `createDetector` loads the pre-trained MoveNet model, which is efficient and good for real-time applications.
-      detector = await poseDetection.createDetector(
-        poseDetection.SupportedModels.MoveNet
-      );
+      try {
+        setIsDetectorLoading(true);
+        setError(null);
+
+        // Ensure TensorFlow.js is ready
+        console.log('Initializing TensorFlow.js...');
+        await tf.ready();
+        setIsTensorflowReady(true);
+        console.log('TensorFlow.js ready!');
+
+        // Configure the detector model
+        const detectorConfig = {
+          modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
+          // You might want to use SINGLEPOSE_THUNDER for higher accuracy
+          // or MULTIPOSE_LIGHTNING/THUNDER if detecting multiple people
+        };
+
+        // Create the detector
+        console.log('Creating pose detector...');
+        const detector = await poseDetection.createDetector(
+          poseDetection.SupportedModels.MoveNet,
+          detectorConfig
+        );
+        detectorRef.current = detector;
+        console.log('Pose detector created!');
+
+      } catch (err) {
+        console.error('Failed to initialize TensorFlow.js or detector:', err);
+        setError('Failed to load pose detection. Please check your console.');
+      } finally {
+        setIsDetectorLoading(false);
+      }
     };
 
     // This asynchronous function sets up the user's webcam.
