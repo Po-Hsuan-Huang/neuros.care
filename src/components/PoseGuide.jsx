@@ -25,12 +25,11 @@ import {
   ArrowForward,
   ArrowBack,
 } from '@mui/icons-material';
+// PoseGuide.jsx
+// Add this at the top of your file after the imports
 
-const PoseGuide = ({ pose }) => {
-  const [activeStep, setActiveStep] = useState(0);
-
-  // Example pose data structure (would typically come from props)
-  const defaultPose = {
+const POSES = {
+  mountain: {
     name: "Mountain Pose (Tadasana)",
     difficulty: "Beginner",
     duration: "1-5 minutes",
@@ -54,9 +53,71 @@ const PoseGuide = ({ pose }) => {
       "Recent head injury",
       "Low blood pressure",
     ],
-  };
+  },
+  warrior: {
+    name: "Warrior I Pose (Virabhadrasana I)",
+    difficulty: "Intermediate",
+    duration: "30-60 seconds per side",
+    benefits: [
+      "Strengthens legs and core",
+      "Opens hip flexors",
+      "Improves balance and stability",
+      "Stretches chest and shoulders"
+    ],
+    steps: [
+      "Start in Mountain Pose",
+      "Step one foot back about 3-4 feet",
+      "Bend front knee to 90 degrees",
+      "Square hips to front of mat",
+      "Raise arms overhead, palms facing each other"
+    ],
+    modifications: [
+      "Keep back heel lifted if needed",
+      "Lower arms to shoulder height",
+      "Use wall for support"
+    ],
+    contraindications: [
+      "Hip or knee injuries",
+      "High blood pressure",
+      "Heart problems"
+    ],
+  },
+  tree: {
+    name: "Tree Pose (Vrksasana)",
+    difficulty: "Beginner-Intermediate",
+    duration: "30-60 seconds per side",
+    benefits: [
+      "Improves balance",
+      "Strengthens legs and core",
+      "Increases focus and concentration",
+      "Opens hips"
+    ],
+    steps: [
+      "Start in Mountain Pose",
+      "Shift weight to one foot",
+      "Place other foot on inner thigh or calf",
+      "Bring hands to heart center",
+      "Optional: Raise arms overhead like branches"
+    ],
+    modifications: [
+      "Place foot on ankle instead of thigh",
+      "Use wall for balance",
+      "Keep hands at heart center"
+    ],
+    contraindications: [
+      "Balance disorders",
+      "Ankle or knee injuries",
+      "High blood pressure (when arms raised)"
+    ],
+  },
+};
 
-  const currentPose = pose || defaultPose;
+
+const PoseGuide = ({ pose }) => {
+  const [activeStep, setActiveStep] = useState(0);
+  
+  // Use the selected pose or default to mountain pose
+  const currentPose = POSES[pose] || POSES.mountain;
 
   const handleNext = () => {
     setActiveStep((prevStep) => prevStep + 1);
@@ -190,5 +251,4 @@ const PoseGuide = ({ pose }) => {
     </Box>
   );
 };
-
 export default PoseGuide;
