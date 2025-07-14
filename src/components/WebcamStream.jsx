@@ -25,47 +25,58 @@ const WebcamStream = ({ onPoseDetected }) => {
   
   // The `useEffect` Hook runs after the component mounts (is added to the screen).
   // It's used here to set up the webcam, initialize the pose detector, and start the pose detection loop.
-  // The empty dependency array `[]` at the end would mean this effect runs only once. However, `[onPoseDetected]` means it will re-run if the `onPoseDetected` function changes.
   useEffect(() => {
     // Declare variables to hold the pose detector and the animation frame ID.
     let detector;
     let animationFrame;
 
-      // 1. Initialize TensorFlow.js and the Pose Detector
-
+    // 1. Initialize TensorFlow.js and the Pose Detector
     const initializeDetector = async () => {
+      // Skip initialization if detector already exists
+      if (detectorRef.current) {
+        console.log('Detector already initialized, skipping...');
+        return;
+      }
+    
+      setIsDetectorLoading(true);
+      setError(null);
+    
       try {
-        setIsDetectorLoading(true);
-        setError(null);
-
-        // Ensure TensorFlow.js is ready
-        console.log('Initializing TensorFlow.js...');
-        await tf.ready();
-        setIsTensorflowReady(true);
-        console.log('TensorFlow.js ready!');
-
-        // Configure the detector model
-        const detectorConfig = {
-          modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
-          // You might want to use SINGLEPOSE_THUNDER for higher accuracy
-          // or MULTIPOSE_LIGHTNING/THUNDER if detecting multiple people
-        };
-
-        // Create the detector
-        console.log('Creating pose detector...');
-        const detector = await poseDetection.createDetector(
-          poseDetection.SupportedModels.MoveNet,
-          detectorConfig
-        );
-        detectorRef.current = detector;
-        console.log('Pose detector created!');
-
+        await initializeTensorFlow();
+        await createPoseDetector();
       } catch (err) {
-        console.error('Failed to initialize TensorFlow.js or detector:', err);
+        console.error('Detector initialization failed:', err);
         setError('Failed to load pose detection. Please check your console.');
       } finally {
         setIsDetectorLoading(false);
       }
+    };
+    
+    const initializeTensorFlow = async () => {
+        try {
+          // Explicitly set WebGL backend first
+          await tf.setBackend('webgl');
+          await tf.ready();
+          setIsTensorflowReady(true);
+          console.log('TensorFlow.js ready with WebGL!');
+        } catch (err) {
+          console.error('TensorFlow initialization failed:', err);
+          throw err;
+        }
+      };
+    
+    const createPoseDetector = async () => {
+      const detectorConfig = {
+        modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
+      };
+
+      console.log('Creating pose detector...');
+      const detector = await poseDetection.createDetector(
+        poseDetection.SupportedModels.MoveNet,
+        detectorConfig
+      );
+      detectorRef.current = detector;
+      console.log('Pose detector created!');
     };
 
     // This asynchronous function sets up the user's webcam.
@@ -97,13 +108,13 @@ const WebcamStream = ({ onPoseDetected }) => {
     // This asynchronous function continuously detects poses from the webcam feed.
     const detectPose = async () => {
       // Ensure the detector is loaded and the video element is available before proceeding.
-      if (!detector || !videoRef.current || videoRef.current.readyState < 3) {
+      if (!detectorRef.current || !videoRef.current || videoRef.current.readyState < 3) {
           animationFrame = requestAnimationFrame(detectPose);
           return;
       };
 
       // `estimatePoses` is the core function from the TensorFlow.js model that analyzes the current video frame and returns an array of detected poses.
-      const poses = await detector.estimatePoses(videoRef.current);
+      const poses = await detectorRef.current.estimatePoses(videoRef.current);
 
       // If at least one pose is detected...
       if (poses.length > 0) {
@@ -111,6 +122,8 @@ const WebcamStream = ({ onPoseDetected }) => {
         onPoseDetected(poses[0]);
         // Draw the detected pose on the canvas to provide visual feedback.
         drawPose(poses[0]);
+      }else{
+        console.log('No pose detected');
       }
 
       // `requestAnimationFrame` tells the browser to run `detectPose` again before the next repaint. This creates a smooth, continuous loop for real-time detection without performance issues.

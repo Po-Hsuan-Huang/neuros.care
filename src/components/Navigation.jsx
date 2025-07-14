@@ -43,7 +43,7 @@ const Navigation = () => {
         <List>
           {menuItems.map((item) => (
             <ListItem 
-              button 
+              button ='true'
               key={item.text} 
               onClick={() => navigate(item.path)}
             >

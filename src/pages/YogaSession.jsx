@@ -43,7 +43,7 @@ const YogaSession = () => {
   const sendPoseDataToBackend = async (data) => {
     try {
       // Use the `fetch` API to send a POST request to `/api/analyze-pose`.
-      const response = await fetch('/api/analyze-pose', {
+      const response = await fetch('http://localhost:3001/api/analyze-pose', {
         method: 'POST', // Specify the HTTP method.
         headers: {
           'Content-Type': 'application/json', // Tell the server we're sending JSON data.
