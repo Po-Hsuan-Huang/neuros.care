@@ -11,13 +11,17 @@ import { Box } from '@mui/material';
 // Import the pose-detection library from TensorFlow.js, which allows us to detect human poses in images and videos.
 import * as poseDetection from '@tensorflow-models/pose-detection';
 import '@tensorflow/tfjs-backend-webgl'; // Import the WebGL backend for better performance
+import { PointOfSaleSharp } from '@mui/icons-material';
+
+const BUFFER_TIME_MS = 500;
 
 // Define a React functional component called WebcamStream.
 // It takes a prop called `onPoseDetected`, which is a function that will be called whenever a new pose is detected.
-const WebcamStream = ({ onPoseDetected }) => {
+const WebcamStream = ({ onPoseDetected, onBufferFull }) => {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const detectorRef = useRef(null); // To store the pose detector instance
+    const bufferRef =useRef([]); // To store the pose detected for the classifier in backend.
     const animationFrameIdRef = useRef(null); // To store the animation frame ID for cleanup
     const [isTensorflowReady, setIsTensorflowReady] = useState(false);
     const [isDetectorLoading, setIsDetectorLoading] = useState(true);
@@ -115,11 +119,32 @@ const WebcamStream = ({ onPoseDetected }) => {
 
       // `estimatePoses` is the core function from the TensorFlow.js model that analyzes the current video frame and returns an array of detected poses.
       const poses = await detectorRef.current.estimatePoses(videoRef.current);
-      console.log('Detected poses:', poses.keypoints);
+      const now = performance.now();
+      console.log('Detected poses:', poses[0]);
       // If at least one pose is detected...
       if (poses.length > 0) {
+        bufferRef.current.push({timestamp: now, pose: poses});
+        // Remove old frames outside the window (just in case)
+        while (
+          bufferRef.current.length > 0 &&
+          now - bufferRef.current[0].timestamp > BUFFER_TIME_MS
+        ) {
+          bufferRef.current.shift();
+        }
+        // Check if buffer is "full"
+        if (
+          bufferRef.current.length > 1 &&
+          bufferRef.current[bufferRef.current.length - 1].timestamp -
+            bufferRef.current[0].timestamp >= BUFFER_TIME_MS
+        ) {
+          if (onBufferFull) {
+            onBufferFull([...bufferRef.current]);
+          }
+          bufferRef.current = [];
+        }
+  
         // Call the `onPoseDetected` function that was passed in as a prop, sending the first detected pose's data to the parent component.
-        onPoseDetected(poses[0]);
+        // onPoseDetected(poses[0]);
         // Draw the detected pose on the canvas to provide visual feedback.
         drawPose(poses[0]);
       }else{
@@ -200,7 +225,7 @@ const WebcamStream = ({ onPoseDetected }) => {
           tracks.forEach(track => track.stop());
       }
     };
-  }, [onPoseDetected]); // The dependency array for the useEffect hook.
+  }, [onBufferFull, onPoseDetected]); // The dependency array for the useEffect hook.
 
   // The JSX returned by the component. This is what gets rendered to the screen.
   return (

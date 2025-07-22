@@ -13,7 +13,7 @@ const YogaSession = () => {
     setSelectedPose(event.target.value);
   };
 
-  const handlePoseDetected = (data) => {
+  const handleBufferFull = (data) => {
     setPoseData(data);
     sendPoseDataToServer(data);
   };
@@ -55,7 +55,7 @@ const YogaSession = () => {
       </Grid>
       <Grid item xs={12} md={8}>
         <Paper elevation={3}>
-          <WebcamStream onPoseDetected={handlePoseDetected} />
+          <WebcamStream onBufferFull={handleBufferFull} />
         </Paper>
       </Grid>
       <Grid item xs={12} md={4}>
