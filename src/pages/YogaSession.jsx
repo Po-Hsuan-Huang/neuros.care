@@ -7,7 +7,7 @@ import PoseGuide from '../components/PoseGuide';
 const YogaSession = () => {
   const [feedback, setFeedback] = useState(null);
   const [poseData, setPoseData] = useState(null);
-  const [selectedPose, setSelectedPose] = useState('mountain');
+  const [selectedPose, setSelectedPose] = useState('Tree Pose');
 
   const handlePoseChange = (event) => {
     setSelectedPose(event.target.value);
@@ -15,23 +15,21 @@ const YogaSession = () => {
 
   const handlePoseDetected = (data) => {
     setPoseData(data);
-    sendPoseDataToBackend(data);
+    sendPoseDataToServer(data);
   };
 
-  const sendPoseDataToBackend = async (data) => {
-    try {
-      const response = await fetch('http://localhost:3001/api/analyze-pose', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      const feedbackData = await response.json();
-      setFeedback(feedbackData);
-    } catch (error) {
-      console.error('Error analyzing pose:', error);
-    }
+  const sendPoseDataToServer = async (poseData) => {
+    const res = await fetch('http://localhost:5000/api/classify-pose', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({         
+        keypoints: poseData.keypoints, // Extract keypoints from poseData
+        targetPose: selectedPose })
+    });
+
+    const result = await res.json();
+    setFeedback(result);
+    return result;
   };
 
   return (
@@ -44,9 +42,14 @@ const YogaSession = () => {
             label="Select Pose"
             onChange={handlePoseChange}
           >
-            <MenuItem value="mountain">Lesson 1: Mountain Pose (Tadasana)</MenuItem>
-            <MenuItem value="warrior">Lesson 2: Warrior I Pose (Virabhadrasana I)</MenuItem>
-            <MenuItem value="tree">Lesson 3: Tree Pose (Vrksasana)</MenuItem>
+            <MenuItem value="Half Moon Pose">Half Moon Pose (Ardha Chandrasana)</MenuItem>
+            <MenuItem value="Bound Angle / Butterfly Pose">Bound Angle / Butterfly Pose (Baddha Konasana)</MenuItem>
+            <MenuItem value="Downward-Facing Dog">Downward-Facing Dog (Adho Mukha Svanasana)</MenuItem>
+            <MenuItem value="Dancer's Pose">Dancer's Pose (Natarajasana)</MenuItem>
+            <MenuItem value="Triangle Pose">Triangle Pose (Trikonasana)</MenuItem>
+            <MenuItem value="Goddess Pose">Goddess Pose (Utkata Konasana)</MenuItem>
+            <MenuItem value="Warrior Pose">Warrior Pose (Veerabhadrasana)</MenuItem>
+            <MenuItem value="Tree Pose">Tree Pose (Vrikshasana)</MenuItem>
           </Select>
         </FormControl>
       </Grid>

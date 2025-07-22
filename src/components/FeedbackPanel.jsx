@@ -24,13 +24,7 @@ const ConfidenceChip = styled(Chip)(({ theme, confidencelevel }) => ({
   }),
 }));
 
-const FeedbackPanel = ({ feedback }) => {
-  const getConfidenceLevel = (confidence) => {
-    if (confidence >= 80) return 'high';
-    if (confidence >= 60) return 'medium';
-    return 'low';
-  };
-
+const FeedbackPanel = ({ feedback, onDetected }) => {
   
 
   const getWaitingMessage = () => {
@@ -46,7 +40,7 @@ const FeedbackPanel = ({ feedback }) => {
         {feedback ? (
           <>
             <Typography variant="body1" gutterBottom>
-              {feedback.message ||feedback.message}
+              {feedback.message}
             </Typography>
             
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
@@ -55,7 +49,7 @@ const FeedbackPanel = ({ feedback }) => {
               </Typography>
               <ConfidenceChip
                 label={`${feedback.confidence}%`}
-                confidencelevel={getConfidenceLevel(feedback.confidence)}
+                confidencelevel={feedback.feedback_level}
                 size="small"
               />
             </Box>

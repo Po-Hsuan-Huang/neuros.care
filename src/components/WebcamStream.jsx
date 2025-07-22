@@ -115,7 +115,7 @@ const WebcamStream = ({ onPoseDetected }) => {
 
       // `estimatePoses` is the core function from the TensorFlow.js model that analyzes the current video frame and returns an array of detected poses.
       const poses = await detectorRef.current.estimatePoses(videoRef.current);
-
+      console.log('Detected poses:', poses.keypoints);
       // If at least one pose is detected...
       if (poses.length > 0) {
         // Call the `onPoseDetected` function that was passed in as a prop, sending the first detected pose's data to the parent component.
@@ -130,26 +130,62 @@ const WebcamStream = ({ onPoseDetected }) => {
       animationFrame = requestAnimationFrame(detectPose);
     };
 
-    // This function draws the detected pose onto the canvas.
+    const SKELETON = [
+      ['nose', 'left_eye'],
+      ['nose', 'right_eye'],
+      ['left_eye', 'left_ear'],
+      ['right_eye', 'right_ear'],
+      ['nose', 'left_shoulder'],
+      ['nose', 'right_shoulder'],
+      ['left_shoulder', 'right_shoulder'],
+      ['left_shoulder', 'left_elbow'],
+      ['right_shoulder', 'right_elbow'],
+      ['left_elbow', 'left_wrist'],
+      ['right_elbow', 'right_wrist'],
+      ['left_shoulder', 'left_hip'],
+      ['right_shoulder', 'right_hip'],
+      ['left_hip', 'right_hip'],
+      ['left_hip', 'left_knee'],
+      ['right_hip', 'right_knee'],
+      ['left_knee', 'left_ankle'],
+      ['right_knee', 'right_ankle']
+    ];
+    
     const drawPose = (pose) => {
-      // Get the 2D drawing context for the canvas.
       const ctx = canvasRef.current.getContext('2d');
-      // Clear the canvas before drawing the new pose to avoid smearing.
       ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-
-      // `pose.keypoints` is an array of points on the body (e.g., nose, left_shoulder, right_knee).
-      // Here you would add your drawing logic to draw dots for keypoints and lines for the skeleton.
-      // Example: Draw a circle for each keypoint.
+    
+      // Draw keypoints (landmarks)
       for (const keypoint of pose.keypoints) {
-          if (keypoint.score > 0.5) { // Only draw keypoints with a high confidence score.
-              ctx.beginPath();
-              ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI);
-              ctx.fillStyle = 'red';
-              ctx.fill();
-          }
+        if (keypoint.score > 0.5) {
+          ctx.beginPath();
+          ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI);
+          ctx.fillStyle = 'red';
+          ctx.fill();
+        }
+      }
+    
+      // Map keypoint names for easy access
+      const keypointsMap = {};
+      for (const kp of pose.keypoints) {
+        keypointsMap[kp.name] = kp;
+      }
+    
+      // Draw skeleton lines
+      for (const [from, to] of SKELETON) {
+        const kp1 = keypointsMap[from];
+        const kp2 = keypointsMap[to];
+        if (kp1 && kp2 && kp1.score > 0.5 && kp2.score > 0.5) {
+          ctx.beginPath();
+          ctx.moveTo(kp1.x, kp1.y);
+          ctx.lineTo(kp2.x, kp2.y);
+          ctx.strokeStyle = 'lime';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        }
       }
     };
-
+    
     // Call the setup functions when the component mounts.
     initializeDetector();
     setupWebcam();

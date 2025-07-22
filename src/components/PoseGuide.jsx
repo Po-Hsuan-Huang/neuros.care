@@ -27,89 +27,236 @@ import {
 } from '@mui/icons-material';
 // PoseGuide.jsx
 // Add this at the top of your file after the imports
-
 const POSES = {
-  mountain: {
-    name: "Mountain Pose (Tadasana)",
-    difficulty: "Beginner",
-    duration: "1-5 minutes",
-    benefits: [
-      "Improves posture",
-      "Strengthens thighs, knees, and ankles",
-      "Increases body awareness",
-    ],
-    steps: [
-      "Stand with feet hip-width apart",
-      "Ground through all four corners of your feet",
-      "Engage your thighs and draw your belly in",
-      "Relax your shoulders and arms",
-      "Breathe deeply and maintain awareness",
-    ],
-    modifications: [
-      "Use a wall for balance support",
-      "Practice seated if standing is challenging",
-    ],
-    contraindications: [
-      "Recent head injury",
-      "Low blood pressure",
-    ],
-  },
-  warrior: {
-    name: "Warrior I Pose (Virabhadrasana I)",
+  Half_Moon_Pose: {
+    name: "Half Moon Pose (Ardha Chandrasana)",
     difficulty: "Intermediate",
-    duration: "30-60 seconds per side",
+    duration: "3–8 breaths",
     benefits: [
-      "Strengthens legs and core",
-      "Opens hip flexors",
-      "Improves balance and stability",
-      "Stretches chest and shoulders"
+      "Improves balance and coordination",
+      "Strengthens ankles, legs, and glutes",
+      "Opens chest and shoulders",
+      "Engages core and spinal stabilizers"
     ],
     steps: [
-      "Start in Mountain Pose",
-      "Step one foot back about 3-4 feet",
-      "Bend front knee to 90 degrees",
-      "Square hips to front of mat",
-      "Raise arms overhead, palms facing each other"
+      "From Triangle Pose, bend the front knee and place front-hand fingertips ~12\" ahead of the foot",
+      "Shift weight into the front foot and hand; lift the back leg parallel to the floor",
+      "Stack hips vertically; rotate chest open while extending top arm upward",
+      "Engage standing leg and press through lifted heel",
+      "Gaze forward, sideways, or up; maintain steady breath"
     ],
     modifications: [
-      "Keep back heel lifted if needed",
-      "Lower arms to shoulder height",
-      "Use wall for support"
+      "Place bottom hand on a block for stability",
+      "Keep gaze down for neck comfort",
+      "Rest lifted foot lightly on a wall"
     ],
     contraindications: [
-      "Hip or knee injuries",
-      "High blood pressure",
-      "Heart problems"
-    ],
+      "Unstable ankle or recent ankle sprain",
+      "Severe balance disorders",
+      "Low blood pressure (rise slowly)"
+    ]
   },
-  tree: {
-    name: "Tree Pose (Vrksasana)",
-    difficulty: "Beginner-Intermediate",
-    duration: "30-60 seconds per side",
+
+  Butterfly: {
+    name: "Bound Angle (Butterfly) Pose (Baddha Konasana)",
+    difficulty: "Beginner",
+    duration: "1–3 minutes",
     benefits: [
-      "Improves balance",
-      "Strengthens legs and core",
-      "Increases focus and concentration",
-      "Opens hips"
+      "Opens hips and groins",
+      "Improves circulation in pelvic region",
+      "Encourages upright seated posture",
+      "Calms the nervous system with forward fold variation"
     ],
     steps: [
-      "Start in Mountain Pose",
-      "Shift weight to one foot",
-      "Place other foot on inner thigh or calf",
-      "Bring hands to heart center",
-      "Optional: Raise arms overhead like branches"
+      "Sit tall with legs extended, then bend knees and bring soles of feet together",
+      "Let knees drop toward the floor; hold feet or ankles",
+      "Lengthen spine upward, broadening collarbones",
+      "Option: hinge forward from hips while keeping spine long",
+      "Breathe evenly without forcing knees down"
     ],
     modifications: [
-      "Place foot on ankle instead of thigh",
-      "Use wall for balance",
-      "Keep hands at heart center"
+      "Sit on a folded blanket to ease lower back rounding",
+      "Place yoga blocks or cushions under knees",
+      "Use a strap looped around lower back and feet for support"
     ],
     contraindications: [
-      "Balance disorders",
-      "Ankle or knee injuries",
-      "High blood pressure (when arms raised)"
-    ],
+      "Acute groin or knee injury",
+      "Recent pelvic surgery"
+    ]
   },
+
+  Downward_dog: {
+    name: "Downward-Facing Dog (Adho Mukha Svanasana)",
+    difficulty: "Beginner–Intermediate",
+    duration: "5–10 breaths",
+    benefits: [
+      "Lengthens hamstrings, calves, and spine",
+      "Builds strength in shoulders and arms",
+      "Energizes the body and improves circulation",
+      "Can relieve mild back tension with proper alignment"
+    ],
+    steps: [
+      "Start on hands and knees; wrists under shoulders, knees under hips",
+      "Spread fingers; tuck toes and lift knees",
+      "Press hips up and back, aiming for a long spine",
+      "Gently straighten legs without locking knees",
+      "Press heels toward (not necessarily to) the floor; relax neck"
+    ],
+    modifications: [
+      "Keep knees bent to lengthen spine",
+      "Use blocks under hands to reduce wrist pressure",
+      "Practice at a wall (hands on wall, hips back)"
+    ],
+    contraindications: [
+      "Recent wrist or shoulder injury",
+      "Uncontrolled high blood pressure",
+      "Late-term pregnancy (modify with elevated hands)"
+    ]
+  },
+
+  Dancer: {
+    name: "Dancer's Pose (Natarajasana)",
+    difficulty: "Intermediate–Advanced",
+    duration: "3–6 breaths each side",
+    benefits: [
+      "Enhances balance and focus",
+      "Opens chest and shoulders",
+      "Stretches quadriceps and hip flexors",
+      "Strengthens standing leg and core"
+    ],
+    steps: [
+      "Stand tall; shift weight into one foot",
+      "Bend opposite knee and grasp inside of foot or ankle",
+      "Inhale, lift chest; exhale, press foot back and up",
+      "Reach free arm forward or upward for balance",
+      "Keep hips square; gaze (drishti) steady"
+    ],
+    modifications: [
+      "Use a strap around the lifted foot",
+      "Hold a wall or chair with front hand",
+      "Keep torso more upright if low back compresses"
+    ],
+    contraindications: [
+      "Knee or ankle instability",
+      "Low back pain or spinal compression issues",
+      "Shoulder injury limiting overhead reach"
+    ]
+  },
+
+  Triangle: {
+    name: "Triangle Pose (Trikonasana)",
+    difficulty: "Beginner–Intermediate",
+    duration: "5–8 breaths each side",
+    benefits: [
+      "Stretches hamstrings, hips, and side body",
+      "Opens chest and shoulders",
+      "Improves spinal mobility",
+      "Builds postural awareness"
+    ],
+    steps: [
+      "From a wide stance, turn front foot out 90° and back foot slightly in",
+      "Extend arms to shoulder height",
+      "Hinge at front hip, reaching forward",
+      "Lower front hand to shin, block, or floor; lift top arm",
+      "Stack shoulders; lengthen both sides of torso; steady breath"
+    ],
+    modifications: [
+      "Use a block outside front shin",
+      "Shorten stance to reduce hamstring strain",
+      "Rest top hand on hip if shoulder fatigues"
+    ],
+    contraindications: [
+      "Acute hamstring injury",
+      "Uncontrolled low blood pressure (rise slowly)",
+      "Neck issues—keep gaze neutral"
+    ]
+  },
+
+  Goddess: {
+    name: "Goddess Pose (Utkata Konasana)",
+    difficulty: "Beginner–Intermediate",
+    duration: "30–60 seconds",
+    benefits: [
+      "Strengthens legs, glutes, and core",
+      "Opens hips and chest",
+      "Builds lower-body endurance",
+      "Improves hip external rotation"
+    ],
+    steps: [
+      "Take a wide stance; toes turned out ~45°",
+      "Inhale tall; exhale bend knees tracking over toes",
+      "Lower hips toward knee height (not below if new)",
+      "Engage core and lengthen spine upright",
+      "Hold arms bent (cactus) or extended; steady breath"
+    ],
+    modifications: [
+      "Reduce turnout angle to ease knees",
+      "Place hands on hips or at heart center",
+      "Use a wall or chair behind for light support"
+    ],
+    contraindications: [
+      "Knee ligament injuries",
+      "Hip replacements—follow medical guidance",
+      "Pelvic floor dysfunction (adjust depth)"
+    ]
+  },
+
+  Warrior2: {
+    name: "Warrior II (Virabhadrasana II)",
+    difficulty: "Beginner–Intermediate",
+    duration: "5–10 breaths each side",
+    benefits: [
+      "Builds leg and hip strength",
+      "Opens hips and chest",
+      "Improves stamina and focus",
+      "Enhances proprioception in lower body"
+    ],
+    steps: [
+      "From a wide stance, turn front foot out 90°, back foot slightly in",
+      "Align front heel with back arch (or wider for stability)",
+      "Bend front knee over ankle toward 90°",
+      "Extend arms parallel to floor; soften shoulders",
+      "Gaze past front fingertips; engage core"
+    ],
+    modifications: [
+      "Shorten stance to reduce knee load",
+      "Rest front forearm on thigh briefly if fatigued",
+      "Use a chair under front thigh for supported hold"
+    ],
+    contraindications: [
+      "Knee issues (limit depth / ensure alignment)",
+      "Hip pain with external rotation",
+      "Shoulder injuries (modify arm position)"
+    ]
+  },
+
+  Tree: {
+    name: "Tree Pose (Vrikshasana)",
+    difficulty: "Beginner",
+    duration: "5–8 breaths each side",
+    benefits: [
+      "Improves balance and ankle stability",
+      "Strengthens standing leg and core",
+      "Promotes focus and calm",
+      "Opens hips (external rotation)"
+    ],
+    steps: [
+      "Stand tall; shift weight into one foot",
+      "Place sole of opposite foot at ankle, calf, or inner thigh (avoid knee)",
+      "Press foot and leg together to engage",
+      "Bring hands to heart or overhead",
+      "Maintain steady gaze and smooth breath"
+    ],
+    modifications: [
+      "Keep toes on floor (kickstand variation)",
+      "Lightly touch a wall or chair for balance",
+      "Hands on hips instead of overhead"
+    ],
+    contraindications: [
+      "Severe ankle instability",
+      "Inner ear / balance disorders (use support)"
+    ]
+  }
 };
 
 
@@ -117,8 +264,7 @@ const PoseGuide = ({ pose }) => {
   const [activeStep, setActiveStep] = useState(0);
   
   // Use the selected pose or default to mountain pose
-  const currentPose = POSES[pose] || POSES.mountain;
-
+  const currentPose = POSES[pose] || POSES.Tree;
   const handleNext = () => {
     setActiveStep((prevStep) => prevStep + 1);
   };
