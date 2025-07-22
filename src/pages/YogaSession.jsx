@@ -13,18 +13,21 @@ const YogaSession = () => {
     setSelectedPose(event.target.value);
   };
 
-  const handleBufferFull = (data) => {
-    setPoseData(data);
-    sendPoseDataToServer(data);
+  const handleBufferFull = (buffer) => {
+    const lastPoseData = buffer[buffer.length - 1];
+    setPoseData(lastPoseData);
+    sendPoseDataToServer(lastPoseData, selectedPose);
   };
 
-  const sendPoseDataToServer = async (poseData) => {
+  const sendPoseDataToServer = async (poseData, selectedPose) => {
     const res = await fetch('http://localhost:5000/api/classify-pose', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({         
-        keypoints: poseData.keypoints, // Extract keypoints from poseData
-        targetPose: selectedPose })
+      body: JSON.stringify({   
+        timestamp: poseData.timestamp,
+        pose: poseData.pose,
+        targetPose: selectedPose
+      })
     });
 
     const result = await res.json();

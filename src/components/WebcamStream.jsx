@@ -139,8 +139,11 @@ const WebcamStream = ({ onPoseDetected, onBufferFull }) => {
         ) {
           if (onBufferFull) {
             onBufferFull([...bufferRef.current]);
+            console.log('Buffer is full');
           }
           bufferRef.current = [];
+          console.log('Buffer is flushed');
+
         }
   
         // Call the `onPoseDetected` function that was passed in as a prop, sending the first detected pose's data to the parent component.

@@ -100,9 +100,10 @@ def convert_pose_landmarks_to_array(keypoints):
 def classify_pose():
     try:
         data = request.get_json()
-        keypoints = data.get('keypoints')  # This will be the array of pose landmarks
+        keypoints = data.get('pose', {}).get('keypoints')
         target_pose = data.get('targetPose')
-
+        timestamp = data.get('timestamp')
+        
         if "keypoints" not in data:
             return jsonify({
                 "error": "No keypoints data provided",
