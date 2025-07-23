@@ -29,8 +29,12 @@ const YogaSession = () => {
         targetPose: selectedPose
       })
     });
+    if (!res.ok) {
+      throw new Error('HTTP error! status: ${res.status}');
+    }
 
     const result = await res.json();
+    console.log('Result:',result);
     setFeedback(result);
     return result;
   };
@@ -45,26 +49,28 @@ const YogaSession = () => {
             label="Select Pose"
             onChange={handlePoseChange}
           >
-            <MenuItem value="Half Moon Pose">Half Moon Pose (Ardha Chandrasana)</MenuItem>
-            <MenuItem value="Bound Angle / Butterfly Pose">Bound Angle / Butterfly Pose (Baddha Konasana)</MenuItem>
-            <MenuItem value="Downward-Facing Dog">Downward-Facing Dog (Adho Mukha Svanasana)</MenuItem>
-            <MenuItem value="Dancer's Pose">Dancer's Pose (Natarajasana)</MenuItem>
-            <MenuItem value="Triangle Pose">Triangle Pose (Trikonasana)</MenuItem>
-            <MenuItem value="Goddess Pose">Goddess Pose (Utkata Konasana)</MenuItem>
-            <MenuItem value="Warrior Pose">Warrior Pose (Veerabhadrasana)</MenuItem>
-            <MenuItem value="Tree Pose">Tree Pose (Vrikshasana)</MenuItem>
+            <MenuItem value="Half_Moon">Half Moon Pose (Ardha Chandrasana)</MenuItem>
+            <MenuItem value="Butterfly">Bound Angle / Butterfly Pose (Baddha Konasana)</MenuItem>
+            <MenuItem value="Downward_Facing_Dog">Downward-Facing Dog (Adho Mukha Svanasana)</MenuItem>
+            <MenuItem value="Dancer">Dancer's Pose (Natarajasana)</MenuItem>
+            <MenuItem value="Triangle">Triangle Pose (Trikonasana)</MenuItem>
+            <MenuItem value="Goddess">Goddess Pose (Utkata Konasana)</MenuItem>
+            <MenuItem value="Warrior_II">Warrior Pose II (Veerabhadrasana II)</MenuItem>
+            <MenuItem value="Tree">Tree Pose (Vrikshasana)</MenuItem>
+
           </Select>
         </FormControl>
       </Grid>
       <Grid item xs={12} md={8}>
         <Paper elevation={3}>
           <WebcamStream onBufferFull={handleBufferFull} />
+          <FeedbackPanel feedback={feedback} />
+
         </Paper>
       </Grid>
       <Grid item xs={12} md={4}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <PoseGuide pose={selectedPose} />
-          <FeedbackPanel feedback={feedback} />
+          <PoseGuide selectedPose={selectedPose}  />
         </Box>
       </Grid>
     </Grid>

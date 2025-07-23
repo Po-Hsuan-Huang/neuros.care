@@ -30,7 +30,7 @@ const FeedbackPanel = ({ feedback, onDetected }) => {
   const getWaitingMessage = () => {
     return "Position yourself clearly in the camera view and hold a yoga pose for analysis";
   };
-
+  console.log("feedback", feedback)
   return (
     <FeedbackContainer elevation={2}>
       <Typography variant="h6" gutterBottom>

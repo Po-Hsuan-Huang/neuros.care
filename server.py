@@ -47,8 +47,38 @@ CLASS_NAMES = {
     29: "Wheel Pose (Chakrasana)"
 }
 
-
-
+ENGLISH_CLASS_NAMES = {
+    0:  "Boat",
+    1:  "Bow",
+    2:  "Bridge",
+    3:  "Camel",
+    4:  "Cat",
+    5:  "Chair",
+    6:  "Cobra",
+    7:  "Corpse",
+    8:  "Crane",
+    9:  "Dancer",
+    10: "Diamond",
+    11: "Downward_Facing_Dog",
+    12: "Eagle",
+    13: "Garland",
+    14: "Goddess",
+    15: "Half_Moon",
+    16: "Lotus",
+    17: "Plank",
+    18: "Plow",
+    19: "Seated_Forward_Fold",
+    20: "Side_Plank",
+    21: "Staff",
+    22: "Standing_Forward_Bend",
+    23: "Tree",
+    24: "Triangle",
+    25: "Upward_Salute",
+    26: "Warrior_I",
+    27: "Warrior_II",
+    28: "Warrior_III",
+    29: "Wheel"
+}
 
 class PredictionError(Exception):
     """Custom exception for pose prediction mismatches"""
@@ -100,11 +130,14 @@ def convert_pose_landmarks_to_array(keypoints):
 def classify_pose():
     try:
         data = request.get_json()
-        keypoints = data.get('pose', {}).get('keypoints')
+        # keypoints = data.get('pose', {}).get('keypoints')
         target_pose = data.get('targetPose')
         timestamp = data.get('timestamp')
-        
-        if "keypoints" not in data:
+        try:
+            keypoints = data.get('pose',{})[0]['keypoints']
+
+        except Exception as e:
+            print("Error:", str(e))
             return jsonify({
                 "error": "No keypoints data provided",
                 "message": "Unable to analyze pose. Please ensure your camera is working.",
@@ -114,29 +147,30 @@ def classify_pose():
         # Convert TF.js keypoints format to model input format
         landmarks = convert_pose_landmarks_to_array(keypoints)
         landmarks_array = np.array(landmarks, dtype=np.float32)
-        print("LANDMARKS:", landmarks)
+        # print("LANDMARKS:", landmarks)
 
         # Reshape according to model input requirements
         landmarks_array = landmarks_array.reshape(input_details[0]['shape'])
-        print("LANDMARKS ARRAY:", landmarks_array)
+        # print("LANDMARKS ARRAY:", landmarks_array)
 
         # Run inference
         interpreter.set_tensor(input_details[0]['index'], landmarks_array)
         interpreter.invoke()
         output_data = interpreter.get_tensor(output_details[0]['index'])
-        print("OUPTUT DATA:", output_data)  
+        # print("OUPTUT DATA:", output_data)  
         # Get predicted class and confidence
         class_no = int(np.argmax(output_data[0]))
         confidence = float(np.max(output_data[0])) * 100  # Convert to percentage
-        class_name = CLASS_NAMES.get(class_no, f"unknown_pose_{class_no}")
+        class_name = ENGLISH_CLASS_NAMES.get(class_no, f"unknown_pose_{class_no}")
         print("CLASS NAME:", class_name)
+        print('breakpoint')
+
         # Check if predicted pose matches target pose
         if class_name.lower() != target_pose.lower():
-            raise PredictionError(f"Predicted pose '{class_name}' does not match target pose '{target_pose}'")
-        
+            print(f"Predicted pose '{class_name}' does not match target pose '{target_pose}'")
+            confidence=0
         # Generate confidence-based feedback message
         message = get_confidence_feedback_message(confidence, class_name)
-        
         # Additional feedback based on confidence thresholds
         feedback_level = "excellent" if confidence >= 90 else \
                         "great" if confidence >= 80 else \
@@ -152,7 +186,9 @@ def classify_pose():
             "feedback_level": feedback_level,
             "raw_predictions": output_data[0].tolist()
         }
-        
+
+        print('preview result before sending to client.')
+        print(result)
         return jsonify(result)
     
     except Exception as e:

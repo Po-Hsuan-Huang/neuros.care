@@ -120,7 +120,7 @@ const WebcamStream = ({ onPoseDetected, onBufferFull }) => {
       // `estimatePoses` is the core function from the TensorFlow.js model that analyzes the current video frame and returns an array of detected poses.
       const poses = await detectorRef.current.estimatePoses(videoRef.current);
       const now = performance.now();
-      console.log('Detected poses:', poses[0]);
+      //console.log('Detected poses:', poses[0]);
       // If at least one pose is detected...
       if (poses.length > 0) {
         bufferRef.current.push({timestamp: now, pose: poses});
@@ -151,7 +151,7 @@ const WebcamStream = ({ onPoseDetected, onBufferFull }) => {
         // Draw the detected pose on the canvas to provide visual feedback.
         drawPose(poses[0]);
       }else{
-        console.log('No pose detected');
+         ;//console.log('No pose detected');
       }
 
       // `requestAnimationFrame` tells the browser to run `detectPose` again before the next repaint. This creates a smooth, continuous loop for real-time detection without performance issues.

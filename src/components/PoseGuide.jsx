@@ -28,7 +28,7 @@ import {
 // PoseGuide.jsx
 // Add this at the top of your file after the imports
 const POSES = {
-  Half_Moon_Pose: {
+  Half_Moon : {
     name: "Half Moon Pose (Ardha Chandrasana)",
     difficulty: "Intermediate",
     duration: "3–8 breaths",
@@ -85,7 +85,7 @@ const POSES = {
     ]
   },
 
-  Downward_dog: {
+  Downward_Facing_Dog: {
     name: "Downward-Facing Dog (Adho Mukha Svanasana)",
     difficulty: "Beginner–Intermediate",
     duration: "5–10 breaths",
@@ -201,7 +201,7 @@ const POSES = {
     ]
   },
 
-  Warrior2: {
+  Warrior_II: {
     name: "Warrior II (Virabhadrasana II)",
     difficulty: "Beginner–Intermediate",
     duration: "5–10 breaths each side",
@@ -260,11 +260,11 @@ const POSES = {
 };
 
 
-const PoseGuide = ({ pose }) => {
+const PoseGuide = ({ selectedPose }) => {
   const [activeStep, setActiveStep] = useState(0);
-  
   // Use the selected pose or default to mountain pose
-  const currentPose = POSES[pose] || POSES.Tree;
+  const currentPose = POSES[selectedPose] || POSES.Tree;
+  console.log("currentPose", currentPose);
   const handleNext = () => {
     setActiveStep((prevStep) => prevStep + 1);
   };
