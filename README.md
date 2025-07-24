@@ -18,16 +18,50 @@ An AI-powered yoga assistant that provides real-time feedback on users' poses us
 - **Backend:** Flask
 - **AI/ML:** TensorFlow, TensorFlow.js
 
-## Setup Instructions
-1. Clone the repository.
-2. Install frontend dependencies:
+## 🧪 Conda Environment Setup
+
+To replicate the development environment:
+
+1. **Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) or [Anaconda](https://www.anaconda.com/).**
+
+2. **Clone this repository:**
+
    ```bash
-   npm install
+   git clone git@github.com:Po-Hsuan-Huang/neuros.care.git
+   cd neuros.care
    ```
-3. Start the development server:
+
+3. **Create the environment from the `.yml` file:**
+
+   ```bash
+   conda env create -f environment.yml
+   ```
+
+4. **Activate the environment:**
+
+   ```bash
+   conda activate ai-yoga-assistant
+   ```
+
+5. **Start the development server (if applicable):**
+
    ```bash
    npm run dev
    ```
+
+> 📌 If you run into issues with conflicting packages, try using `mamba` (a faster conda alternative):
+>
+> ```bash
+> conda install mamba -n base -c conda-forge
+> mamba env create -f environment.yml
+> ```
+
+
+6. **Start the fLASK backend server:**
+   ```bash
+   python server.py
+   ```
+7. **Turn on the web cam and open the browser to see the app**
 
 ## Available Scripts
 - `npm run dev` – Launch the development server
