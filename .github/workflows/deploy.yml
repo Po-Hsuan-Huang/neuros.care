@@ -31,6 +31,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }} # GitHub's built-in token
           publish_dir: ./dist # The directory containing your built static files (e.g., 'build', 'dist', 'public')
           publish_branch: gh-pages # The branch to publish to (create if it doesn't exist)
+          cname: neuros.care
           # For project pages, ensure your 'homepage' in package.json is set correctly.
           # For user/organization pages, set publish_dir to the root of your main branch,
           # and change publish_branch to 'main' if you want to serve from main.
