@@ -1,7 +1,7 @@
-import React from 'react';
+import React,{useState, useEffect} from 'react';
 import { Paper, Typography, Box, Chip } from '@mui/material';
 import { styled } from '@mui/material/styles';
-
+import{speakText} from './utils/speechUtils'
 const FeedbackContainer = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
   backgroundColor: theme.palette.background.paper,
@@ -10,22 +10,39 @@ const FeedbackContainer = styled(Paper)(({ theme }) => ({
 
 const ConfidenceChip = styled(Chip)(({ theme, confidencelevel }) => ({
   fontWeight: 'bold',
-  ...(confidencelevel === 'high' && {
+  // excellent & great share the same style
+  ...(["excellent", "great"].includes(confidencelevel) && {
     backgroundColor: theme.palette.success.light,
     color: theme.palette.success.contrastText,
   }),
-  ...(confidencelevel === 'medium' && {
+  ...(confidencelevel === 'good' && {
+    backgroundColor: theme.palette.info.light,
+    color: theme.palette.info.contrastText,
+  }),
+  ...(confidencelevel === 'fair' && {
     backgroundColor: theme.palette.warning.light,
     color: theme.palette.warning.contrastText,
   }),
-  ...(confidencelevel === 'low' && {
+  ...(confidencelevel === 'needs_improvement' && {
     backgroundColor: theme.palette.error.light,
     color: theme.palette.error.contrastText,
   }),
 }));
 
 const FeedbackPanel = ({ feedback, onDetected }) => {
-  
+
+  const [confidenceLevel, setConfidenceLevel] = useState('needs_improvement');
+  // Speak step instruction every time activeStep changes
+  useEffect(() => {
+    if (feedback?.confidenceLevel) {
+      setConfidenceLevel(feedback.confidenceLevel);
+    }
+  }, [feedback?.confidenceLevel]);
+
+  useEffect(() => {
+    speakText(confidenceLevel);
+  }, [confidenceLevel]);
+
 
   const getWaitingMessage = () => {
     return "Position yourself clearly in the camera view and hold a yoga pose for analysis";

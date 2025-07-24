@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   Typography,
@@ -25,6 +25,11 @@ import {
   ArrowForward,
   ArrowBack,
 } from '@mui/icons-material';
+
+import{speakText} from './utils/speechUtils'
+
+
+
 // PoseGuide.jsx
 // Add this at the top of your file after the imports
 const POSES = {
@@ -259,18 +264,31 @@ const POSES = {
   }
 };
 
-
 const PoseGuide = ({ selectedPose }) => {
   const [activeStep, setActiveStep] = useState(0);
+
+  // Speak step instruction every time activeStep changes
+  useEffect(() => {
+    speakText(currentPose.steps[activeStep]);
+  }, [activeStep]);
+
   // Use the selected pose or default to mountain pose
   const currentPose = POSES[selectedPose] || POSES.Tree;
   console.log("currentPose", currentPose);
   const handleNext = () => {
-    setActiveStep((prevStep) => prevStep + 1);
+    setActiveStep((prev) => {
+      const nextStep = prev + 1;
+      speakText(currentPose.steps[nextStep]);
+      return nextStep;
+    });
   };
-
+  
   const handleBack = () => {
-    setActiveStep((prevStep) => prevStep - 1);
+    setActiveStep((prev) => {
+      const prevStep = prev - 1;
+      speakText(currentPose.steps[prevStep]);
+      return prevStep;
+    });
   };
 
   const handleReset = () => {
