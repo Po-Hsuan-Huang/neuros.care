@@ -7,7 +7,7 @@ import PoseGuide from '../components/PoseGuide';
 const YogaSession = () => {
   const [feedback, setFeedback] = useState(null);
   const [poseData, setPoseData] = useState(null);
-  const [selectedPose, setSelectedPose] = useState('Tree Pose');
+  const [selectedPose, setSelectedPose] = useState('Tree');
 
   const handlePoseChange = (event) => {
     setSelectedPose(event.target.value);
