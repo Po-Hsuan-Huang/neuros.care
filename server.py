@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import numpy as np
 import tensorflow as tf
+print('num GPU available:', len(tf.config.list_physical_devices('GPU')))
 tflite = tf.lite
 app = Flask(__name__)
 CORS(app)
