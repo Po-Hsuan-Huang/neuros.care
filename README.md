@@ -1,4 +1,16 @@
-# AI Yoga Assistant
+# Project Name: AI Yoga Assistant
+
+# Skills Demonstrated:
+* Familiarity with React, Javascript, HTML, and CSS.
+* Familiarity with deploy a pretrained model from Tensorflow.js.
+* Familiarity with training deep neural network models in Tensorflow.
+* Familiarity with model quntaizatioan to reduce computational and memory cost.
+* Familiarity with Flask.
+* Familiarity with CD/CI.
+* Familiartiy with deploying customized model into production.
+* Familiarity with the full cycle of full-stack development.
+
+
 
 ## Setup
 1. Clone the repository
