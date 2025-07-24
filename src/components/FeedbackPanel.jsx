@@ -23,7 +23,7 @@ const ConfidenceChip = styled(Chip)(({ theme, confidencelevel }) => ({
     backgroundColor: theme.palette.warning.light,
     color: theme.palette.warning.contrastText,
   }),
-  ...(confidencelevel === 'needs_improvement' && {
+  ...(confidencelevel === 'needs improvement' && {
     backgroundColor: theme.palette.error.light,
     color: theme.palette.error.contrastText,
   }),
@@ -31,16 +31,19 @@ const ConfidenceChip = styled(Chip)(({ theme, confidencelevel }) => ({
 
 const FeedbackPanel = ({ feedback, onDetected }) => {
 
-  const [confidenceLevel, setConfidenceLevel] = useState('needs_improvement');
+  const [confidenceLevel, setConfidenceLevel] = useState('needs improvement');
   // Speak step instruction every time activeStep changes
   useEffect(() => {
     if (feedback?.confidenceLevel) {
+      console.log("update confidence level: ", feedback.confidenceLevel)
+
       setConfidenceLevel(feedback.confidenceLevel);
     }
   }, [feedback?.confidenceLevel]);
 
   useEffect(() => {
     speakText(confidenceLevel);
+    console.log("speak text confidence level: ", confidenceLevel)
   }, [confidenceLevel]);
 
 
@@ -66,7 +69,7 @@ const FeedbackPanel = ({ feedback, onDetected }) => {
               </Typography>
               <ConfidenceChip
                 label={`${feedback.confidence}%`}
-                confidencelevel={feedback.feedback_level}
+                confidencelevel={feedback.confidenceLevel}
                 size="small"
               />
             </Box>

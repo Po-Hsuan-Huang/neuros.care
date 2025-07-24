@@ -177,14 +177,14 @@ def classify_pose():
                         "great" if confidence >= 80 else \
                         "good" if confidence >= 70 else \
                         "fair" if confidence >= 60 else \
-                        "needs_improvement"
+                        "needs improvement"
         
         result = {
             "class_no": class_no,
             "class_name": class_name,
             "confidence": round(confidence, 1),
             "message": message,
-            "feedback_level": feedback_level,
+            "confidenceLevel": feedback_level,
             "raw_predictions": output_data[0].tolist()
         }
 

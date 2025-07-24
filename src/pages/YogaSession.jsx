@@ -20,7 +20,7 @@ const YogaSession = () => {
   };
 
   const sendPoseDataToServer = async (poseData, selectedPose) => {
-    const res = await fetch('https://07965c72490b.ngrok-free.app/api/classify-pose', {
+    const res = await fetch('http://127.0.0.1:5000/api/classify-pose', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({   
