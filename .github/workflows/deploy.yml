@@ -20,7 +20,7 @@ jobs:
           node-version: '20' # Specify Node.js version (adjust as needed)
 
       - name: Install Dependencies
-        run: npm install # Or 'yarn install' if you use Yarn
+        run: npm install --legacy-peer-deps# Or 'yarn install' if you use Yarn
 
       - name: Build Project
         run: npm run build # Or 'yarn build'. This creates your production build (e.g., 'build' or 'dist' folder)
