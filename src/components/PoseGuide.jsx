@@ -27,9 +27,9 @@ import {
 } from '@mui/icons-material';
 
 import{speakText} from './utils/speechUtils'
-import{CountdownStep} from './utils/countdownUtils'
-
-
+import{CountdownStep} from './utils/countdownUtils.jsx'
+import { useUser } from '../context/UserContext';
+import { useSnapshotQueue } from './utils/useSnapshotQueue.jsx';
 // PoseGuide.jsx
 // Add this at the top of your file after the imports
 const POSES = {
@@ -265,6 +265,8 @@ const POSES = {
 };
 
 const PoseGuide = ({ selectedPose }) => {
+  const { username } = useUser();
+
   const [activeStep, setActiveStep] = useState(0);
 
   // Speak step instruction every time activeStep changes
@@ -280,9 +282,11 @@ const PoseGuide = ({ selectedPose }) => {
 
   const takeSnapshot = async () => {
     if (canvasRef.current) {
-      canvasRef.toBlob(blob => {
-        if (blob) addSnapshot(blob);
-        }, 'image.png');
+      canvasRef.current.toBlob((blob) => {
+        if (blob){
+          addSnapshot(blob);
+        }
+       }, 'image/png');
     };
   };
 
@@ -357,7 +361,7 @@ const PoseGuide = ({ selectedPose }) => {
                 <Typography variant="subtitle1">Step {index + 1}</Typography>
               </StepLabel>
               <CountdownStep
-                // onComplete={handleCountdownComplete}
+                onComplete={handleCountdownComplete}
               />
               <StepContent>
                 <Typography>{step}</Typography>
