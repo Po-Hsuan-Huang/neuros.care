@@ -27,7 +27,7 @@ import {
 } from '@mui/icons-material';
 
 import{speakText} from './utils/speechUtils'
-
+import{CountdownStep} from './utils/countdownUtils'
 
 
 // PoseGuide.jsx
@@ -272,6 +272,20 @@ const PoseGuide = ({ selectedPose }) => {
     speakText(currentPose.steps[activeStep]);
   }, [activeStep]);
 
+  const { addSnapshot } = useSnapshotQueue(username);
+
+  const handleCountdownComplete = async () => {
+    await takeSnapshot();
+  };
+
+  const takeSnapshot = async () => {
+    if (canvasRef.current) {
+      canvasRef.toBlob(blob => {
+        if (blob) addSnapshot(blob);
+        }, 'image.png');
+    };
+  };
+
   // Use the selected pose or default to mountain pose
   const currentPose = POSES[selectedPose] || POSES.Tree;
   console.log("currentPose", currentPose);
@@ -342,6 +356,9 @@ const PoseGuide = ({ selectedPose }) => {
               <StepLabel>
                 <Typography variant="subtitle1">Step {index + 1}</Typography>
               </StepLabel>
+              <CountdownStep
+                // onComplete={handleCountdownComplete}
+              />
               <StepContent>
                 <Typography>{step}</Typography>
                 <Box sx={{ mb: 2, mt: 1 }}>
