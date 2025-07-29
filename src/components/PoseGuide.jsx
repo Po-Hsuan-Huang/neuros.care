@@ -360,9 +360,12 @@ const PoseGuide = ({ selectedPose }) => {
               <StepLabel>
                 <Typography variant="subtitle1">Step {index + 1}</Typography>
               </StepLabel>
-              <CountdownStep
-                onComplete={handleCountdownComplete}
-              />
+              
+              {/* Only render countdown for the active step */}
+              {index === activeStep && (
+                <CountdownStep onComplete={handleCountdownComplete} activeStep={index + 1} />
+              )}
+
               <StepContent>
                 <Typography>{step}</Typography>
                 <Box sx={{ mb: 2, mt: 1 }}>
