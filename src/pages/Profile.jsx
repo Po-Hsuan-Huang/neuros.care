@@ -1,11 +1,16 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import { Typography, Box } from '@mui/material';
+import { useUser } from '../context/UserContext';
+
 
 const Profile = () => {
+
+  const { username } = useUser();
+
   return (
     <Box>
       <Typography variant="h4">Profile</Typography>
-      Add profile content here
+      Hi, {username}.<br/>
     </Box>
   );
 };
