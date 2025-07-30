@@ -8,9 +8,11 @@ const YogaSession = () => {
   const [feedback, setFeedback] = useState(null);
   const [poseData, setPoseData] = useState(null);
   const [selectedPose, setSelectedPose] = useState('Tree');
+  const canvasRef = useRef(null);
 
   const handlePoseChange = (event) => {
     setSelectedPose(event.target.value);
+    setActive
   };
 
   const handleBufferFull = (buffer) => {
@@ -63,14 +65,14 @@ const YogaSession = () => {
       </Grid>
       <Grid item xs={12} md={8}>
         <Paper elevation={3}>
-          <WebcamStream onBufferFull={handleBufferFull} />
+          <WebcamStream onBufferFull={handleBufferFull} canvasRef={canvasRef} />
           <FeedbackPanel feedback={feedback} />
 
         </Paper>
       </Grid>
       <Grid item xs={12} md={4}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <PoseGuide selectedPose={selectedPose}  />
+          <PoseGuide selectedPose={selectedPose} cavasRef={canvasRef}  />
         </Box>
       </Grid>
     </Grid>

@@ -264,20 +264,26 @@ const POSES = {
   }
 };
 
-const PoseGuide = ({ selectedPose }) => {
+const PoseGuide = ({ selectedPose, canvasRef }) => {
   const { username } = useUser();
 
   const [activeStep, setActiveStep] = useState(0);
+  const [isCountingDown, setIsCountingDown] = useState(false);
 
-  // Speak step instruction every time activeStep changes
+  useEffect(() => {setActiveStep(0);}, [selectedPose]);
+
+  //Sequence of effects.Allow 5 second for the speech to finish before the next step. 
   useEffect(() => {
-    speakText(currentPose.steps[activeStep]);
+    speakText(currentPose.steps[activeStep]);  
+    setTimeout(() => {
+      setIsCountingDown(true);
+    }, 5000); // 5 seconds for speech to finish
   }, [activeStep]);
 
-  const { addSnapshot } = useSnapshotQueue(username);
-
   const handleCountdownComplete = async () => {
+    setIsCountingDown(false);
     await takeSnapshot();
+    // Maybe advance to next step here?
   };
 
   const takeSnapshot = async () => {
@@ -362,7 +368,7 @@ const PoseGuide = ({ selectedPose }) => {
               </StepLabel>
               
               {/* Only render countdown for the active step */}
-              {index === activeStep && (
+              {index === activeStep && isCountingDown === true && (
                 <CountdownStep onComplete={handleCountdownComplete} activeStep={index + 1} />
               )}
 
