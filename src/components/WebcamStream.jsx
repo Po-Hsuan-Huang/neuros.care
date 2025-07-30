@@ -17,16 +17,14 @@ const BUFFER_TIME_MS = 500;
 
 // Define a React functional component called WebcamStream.
 // It takes a prop called `onPoseDetected`, which is a function that will be called whenever a new pose is detected.
-const WebcamStream = ({ onPoseDetected, onBufferFull }) => {
-    const videoRef = useRef(null);
-    const canvasRef = useRef(null);
+const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
     const detectorRef = useRef(null); // To store the pose detector instance
     const bufferRef =useRef([]); // To store the pose detected for the classifier in backend.
     const animationFrameIdRef = useRef(null); // To store the animation frame ID for cleanup
     const [isTensorflowReady, setIsTensorflowReady] = useState(false);
     const [isDetectorLoading, setIsDetectorLoading] = useState(true);
     const [error, setError] = useState(null);
-  
+    const canvasRef = useRef(null)
   // The `useEffect` Hook runs after the component mounts (is added to the screen).
   // It's used here to set up the webcam, initialize the pose detector, and start the pose detection loop.
   useEffect(() => {

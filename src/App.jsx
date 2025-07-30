@@ -7,20 +7,26 @@ import Home from './pages/Home';
 import YogaSession from './pages/YogaSession';
 import Profile from './pages/Profile';
 import Progress from './pages/Progress';
+import { useUserContext } from './context/UserContext'; 
+import { SnapshotProvider } from './context/SnapshotContext';
 
 function App() {
+  const { username } = useUserContext();
   return (
     <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/session" element={<YogaSession />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/progress" element={<Progress />} /> 
-          </Routes>
-        </Layout>
-      </BrowserRouter>
+      <SnapshotProvider username={username}>
+        <BrowserRouter>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/session" element={<YogaSession />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/progress" element={<Progress />} /> 
+            </Routes>
+          </Layout>
+        </BrowserRouter>
+      </SnapshotProvider>
+
     </ThemeProvider>
   );
 }
