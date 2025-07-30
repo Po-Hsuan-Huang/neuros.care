@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Card,
   Typography,
@@ -27,7 +27,7 @@ import {
 } from '@mui/icons-material';
 
 import{speakText} from './utils/speechUtils'
-import{CountdownStep} from './utils/countdownUtils.jsx'
+import{CountdownStep, CountdownBreathCycle} from './utils/countdownUtils.jsx'
 import { useUser } from '../context/UserContext';
 import { useSnapshotQueue } from './utils/useSnapshotQueue.jsx';
 // PoseGuide.jsx
@@ -269,14 +269,19 @@ const PoseGuide = ({ selectedPose, canvasRef }) => {
 
   const [activeStep, setActiveStep] = useState(0);
   const [isCountingDown, setIsCountingDown] = useState(false);
+  const [isSpeakText, setIsSpeakTexting] = useState(false);
+
+  const beepRef = useRef(null);
 
   useEffect(() => {setActiveStep(0);}, [selectedPose]);
 
   //Sequence of effects.Allow 5 second for the speech to finish before the next step. 
   useEffect(() => {
+    setIsSpeakTexting(true);
     speakText(currentPose.steps[activeStep]);  
     setTimeout(() => {
       setIsCountingDown(true);
+      setIsSpeakTexting(false);
     }, 5000); // 5 seconds for speech to finish
   }, [activeStep]);
 
@@ -371,7 +376,21 @@ const PoseGuide = ({ selectedPose, canvasRef }) => {
               {index === activeStep && isCountingDown === true && (
                 <CountdownStep onComplete={handleCountdownComplete} activeStep={index + 1} />
               )}
+              
+              {/* Only render countdown for breath cycles for the last active step */}
+              
+              <audio ref={beepRef} src="/beep.mp3" preload="auto" />
 
+              {index === activeStep && isCountingDown === false && isSpeakText=== false && index === currentPose.steps.length - 1 && (
+              <CountdownBreathCycle
+                activeStep={activeStep}
+                isLastStep={index === currentPose.steps.length - 1}
+                duration={5}
+                beepRef={beepRef}
+                
+              />
+              )}
+              
               <StepContent>
                 <Typography>{step}</Typography>
                 <Box sx={{ mb: 2, mt: 1 }}>
