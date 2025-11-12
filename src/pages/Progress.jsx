@@ -30,9 +30,11 @@ const Progress = () => {
                   <img
                     src={url}
                     alt={`Snapshot of ${poseName}`}
-                    width={160}
-                    height={120}
-                    style={{ borderRadius: 4 }}
+                    style={{
+                      width: 'auto',   // Auto width to maintain aspect ratio
+                      height: 120,     // Fixed height (you can adjust as needed)
+                      borderRadius: 4,
+                    }}
                   />
                 </Grid>
               );
