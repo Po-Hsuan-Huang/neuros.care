@@ -1,3 +1,5 @@
+import os
+import json
 import numpy as np
 from typing import Dict, List, Tuple, Optional
 
@@ -43,10 +45,25 @@ def _keypoints_by_name(keypoints: List[Dict]) -> Dict[str, Dict]:
                 by_name[names[i]] = kp
     return by_name
 
-
-# ------------------------------
-# Angle computation
-# ------------------------------
+# Try loading learned angle profiles from JSON
+def _load_profiles_from_json() -> Optional[Dict[str, Dict[str, Tuple[float, float]]]]:
+    try:
+        data_dir = os.path.join(os.path.dirname(__file__), 'data')
+        json_path = os.path.join(data_dir, 'angle_profiles.json')
+        if not os.path.exists(json_path):
+            return None
+        with open(json_path, 'r') as f:
+            raw = json.load(f)
+        # Ensure tuples for ranges
+        profiles: Dict[str, Dict[str, Tuple[float, float]]] = {}
+        for cls, joints in raw.items():
+            profiles[cls] = {}
+            for j, rng in joints.items():
+                if isinstance(rng, (list, tuple)) and len(rng) == 2:
+                    profiles[cls][j] = (float(rng[0]), float(rng[1]))
+        return profiles
+    except Exception:
+        return None
 
 def compute_joint_angles(keypoints: List[Dict]) -> Dict[str, Optional[float]]:
     """Compute common joint angles from keypoints (degrees)."""
@@ -72,7 +89,8 @@ def compute_joint_angles(keypoints: List[Dict]) -> Dict[str, Optional[float]]:
 # Each entry is angle ranges per joint.
 # Example: { 'left_knee': (170, 185) } means aim ~straight.
 # ------------------------------
-TARGET_ANGLE_PROFILES: Dict[str, Dict[str, Tuple[float, float]]] = {
+# Default heuristic profiles (used if JSON file is missing)
+DEFAULT_TARGET_ANGLE_PROFILES: Dict[str, Dict[str, Tuple[float, float]]] = {
     # 0 Boat Pose (Navasana)
     'boat': {
         'left_knee': (80, 120), 'right_knee': (80, 120),
