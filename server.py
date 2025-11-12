@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import numpy as np
 import tensorflow as tf
+from PoseSuggestion import suggest_corrections, compute_joint_angles, normalize_pose_name
 print('num GPU available:', len(tf.config.list_physical_devices('GPU')))
 tflite = tf.lite
 app = Flask(__name__)
@@ -127,6 +128,9 @@ def convert_pose_landmarks_to_array(keypoints):
 
 
 
+## Moved angle utilities and correction logic to PoseSuggestion.py
+
+
 @app.route("/api/classify-pose", methods=["POST"])
 def classify_pose():
     try:
@@ -166,10 +170,12 @@ def classify_pose():
         print("CLASS NAME:", class_name)
         print('breakpoint')
 
-        # Check if predicted pose matches target pose
-        if class_name.lower() != target_pose.lower():
-            print(f"Predicted pose '{class_name}' does not match target pose '{target_pose}'")
-            confidence=0
+        # Check if predicted pose matches target pose (normalized)
+        normalized_pred = normalize_pose_name(class_name)
+        normalized_target = normalize_pose_name(target_pose)
+        if normalized_target and normalized_pred != normalized_target:
+            print(f"Predicted pose '{class_name}' does not match target pose '{target_pose}' (normalized: {normalized_pred} vs {normalized_target})")
+            confidence = 0
         # Generate confidence-based feedback message
         message = get_confidence_feedback_message(confidence, class_name)
         # Additional feedback based on confidence thresholds
@@ -179,13 +185,18 @@ def classify_pose():
                         "fair" if confidence >= 60 else \
                         "needs improvement"
         
+        # Derive pose corrections and joint angles
+        corrections, joint_angles = suggest_corrections(keypoints, target_pose)
+
         result = {
             "class_no": class_no,
             "class_name": class_name,
             "confidence": round(confidence, 1),
             "message": message,
             "confidenceLevel": feedback_level,
-            "raw_predictions": output_data[0].tolist()
+            "raw_predictions": output_data[0].tolist(),
+            "joint_angles": joint_angles,
+            "corrections": corrections
         }
 
         print('preview result before sending to client.')
