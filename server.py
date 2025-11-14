@@ -3,6 +3,8 @@ from flask_cors import CORS
 import numpy as np
 import tensorflow as tf
 from PoseSuggestion import suggest_corrections, compute_joint_angles, normalize_pose_name
+import time
+
 print('num GPU available:', len(tf.config.list_physical_devices('GPU')))
 tflite = tf.lite
 app = Flask(__name__)
@@ -133,6 +135,7 @@ def convert_pose_landmarks_to_array(keypoints):
 
 @app.route("/api/classify-pose", methods=["POST"])
 def classify_pose():
+    start_time = time.time()
     try:
         data = request.get_json()
         # keypoints = data.get('pose', {}).get('keypoints')
@@ -201,6 +204,7 @@ def classify_pose():
 
         print('preview result before sending to client.')
         print(result)
+        print('time taken:', time.time() - start_time)
         return jsonify(result)
     
     except Exception as e:
