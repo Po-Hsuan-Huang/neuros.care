@@ -83,7 +83,15 @@ def compute_joint_angles(keypoints: List[Dict]) -> Dict[str, Optional[float]]:
     angles['right_knee'] = _angle_between(kp.get('right_hip', {}), kp.get('right_knee', {}), kp.get('right_ankle', {})) if kp.get('right_knee') else None
     return angles
 
-
+# If `_load_profiles_from_json()` returns a truthy value, `TARGET_ANGLE_PROFILES` will be set to that value.
+# If `_load_profiles_from_json()` returns a falsy value (e.g., `None`), `TARGET_ANGLE_PROFILES` will be set to `DEFAULT_TARGET_ANGLE_PROFILES`.
+#
+# The `or` operator is used here because it short-circuits. If `_load_profiles_from_json()` returns a truthy value, it will not evaluate the right-hand side of the `or` operator.
+#
+# If `_load_profiles_from_json()` returns a falsy value, the right-hand side of the `or` operator (`DEFAULT_TARGET_ANGLE_PROFILES`) will be evaluated and assigned to `TARGET_ANGLE_PROFILES`.
+#
+# This is known as "short-circuit evaluation" and it is a common pattern used in Python to handle cases where you want to assign a default value if a certain condition is not met.
+TARGET_ANGLE_PROFILES = _load_profiles_from_json() or DEFAULT_TARGET_ANGLE_PROFILES
 # ------------------------------
 # Target pose angle profiles (heuristics)
 # Each entry is angle ranges per joint.

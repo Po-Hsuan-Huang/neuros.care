@@ -1,7 +1,13 @@
 import React,{useState, useEffect} from 'react';
-import { Paper, Typography, Box, Chip } from '@mui/material';
+import { Paper, Typography, Box, Chip, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import{speakText} from './utils/speechUtils'
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import StraightenIcon from '@mui/icons-material/Straighten';
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import OpenInFullIcon from '@mui/icons-material/OpenInFull';
+import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 const FeedbackContainer = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
   backgroundColor: theme.palette.background.paper,
@@ -28,8 +34,23 @@ const ConfidenceChip = styled(Chip)(({ theme, confidencelevel }) => ({
     color: theme.palette.error.contrastText,
   }),
 }));
-
+  
+const CorrectionChip = styled(Chip)(({ theme, correction }) => ({
+  fontWeight: 'bold',
+  marginTop: theme.spacing(1),
+  ...(correction && {
+    backgroundColor: theme.palette.warning.light,
+    color: theme.palette.warning.contrastText,
+    textTransform: 'capitalize',
+    display: 'flex',
+    flexWrap: 'wrap',
+    '& > *': {
+      margin: theme.spacing(0.5),
+    },
+  }),
+}));
 const FeedbackPanel = ({ feedback, onDetected }) => {
+
 
   const [confidenceLevel, setConfidenceLevel] = useState('needs improvement');
   // Speak step instruction every time activeStep changes
@@ -46,6 +67,27 @@ const FeedbackPanel = ({ feedback, onDetected }) => {
     console.log("speak text confidence level: ", confidenceLevel)
   }, [confidenceLevel]);
 
+  // Helpers: categorize correction text to icon/color
+  const getCorrectionMeta = (text) => {
+    if (!text || typeof text !== 'string') return { icon: <WarningAmberIcon />, color: 'warning' };
+    const t = text.toLowerCase();
+    if (t.includes('raise') || t.includes('higher') || t.includes('lift')) {
+      return { icon: <ArrowUpwardIcon />, color: 'warning' };
+    }
+    if (t.includes('straighten')) {
+      return { icon: <StraightenIcon />, color: 'info' };
+    }
+    if (t.includes('bend')) {
+      return { icon: <FitnessCenterIcon />, color: 'secondary' };
+    }
+    if (t.includes('open')) {
+      return { icon: <OpenInFullIcon />, color: 'success' };
+    }
+    if (t.includes('close')) {
+      return { icon: <CloseFullscreenIcon />, color: 'error' };
+    }
+    return { icon: <WarningAmberIcon />, color: 'warning' };
+  };
 
   const getWaitingMessage = () => {
     return "Position yourself clearly in the camera view and hold a yoga pose for analysis";
@@ -68,15 +110,34 @@ const FeedbackPanel = ({ feedback, onDetected }) => {
                 Confidence:
               </Typography>
               <ConfidenceChip
-                label={`${feedback.confidence}%`}
-                confidencelevel={feedback.confidenceLevel}
+                label={typeof feedback?.confidence === 'number' ? `${Math.round(feedback.confidence)}%` : 'N/A'}
+                confidencelevel={feedback?.confidenceLevel || 'needs improvement'}
                 size="small"
               />
             </Box>
-            
+
+            {Array.isArray(feedback?.corrections) && feedback.corrections.length > 0 && (
+              <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap' }}>
+                {feedback.corrections.map((c, idx) => {
+                  const { icon, color } = getCorrectionMeta(c);
+                  return (
+                    <Chip
+                      key={`${c}-${idx}`}
+                      icon={icon}
+                      label={c}
+                      color={color}
+                      variant="outlined"
+                      size="small"
+                      sx={{ textTransform: 'capitalize' }}
+                    />
+                  );
+                })}
+              </Stack>
+            )}
+
             {feedback.class_name && (
               <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                Detected pose: {feedback.class_name.replace(/_/g, ' ')}
+                Detected pose: {String(feedback.class_name).replace(/_/g, ' ')}
               </Typography>
             )}
           </>
