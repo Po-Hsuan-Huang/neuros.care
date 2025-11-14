@@ -12,6 +12,7 @@ const YogaSession = () => {
 
   const handlePoseChange = (event) => {
     setSelectedPose(event.target.value);
+    setActive
   };
 
   const handleBufferFull = (buffer) => {
@@ -21,7 +22,7 @@ const YogaSession = () => {
   };
 
   const sendPoseDataToServer = async (poseData, selectedPose) => {
-    const res = await fetch('http://127.0.0.1:5000/api/classify-pose', {
+    const res = await fetch('https://ab8da7976ce8.ngrok-free.app/api/classify-pose', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({   
