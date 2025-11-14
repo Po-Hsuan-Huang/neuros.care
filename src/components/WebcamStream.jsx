@@ -4,7 +4,6 @@
 // useRef is a React Hook that lets you reference a value that's not needed for rendering. Here, it's used to get direct access to the <video> and <canvas> DOM elements.
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as tf from '@tensorflow/tfjs';
-
 // Import the Box component from Material-UI for easy styling and layout.
 import { Box } from '@mui/material';
 
@@ -13,20 +12,18 @@ import * as poseDetection from '@tensorflow-models/pose-detection';
 import '@tensorflow/tfjs-backend-webgl'; // Import the WebGL backend for better performance
 import { PointOfSaleSharp } from '@mui/icons-material';
 
-const BUFFER_TIME_MS = 500;
+const BUFFER_TIME_MS = 100;
 
 // Define a React functional component called WebcamStream.
 // It takes a prop called `onPoseDetected`, which is a function that will be called whenever a new pose is detected.
-const WebcamStream = ({ onPoseDetected, onBufferFull }) => {
-    const videoRef = useRef(null);
-    const canvasRef = useRef(null);
+const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
     const detectorRef = useRef(null); // To store the pose detector instance
     const bufferRef =useRef([]); // To store the pose detected for the classifier in backend.
     const animationFrameIdRef = useRef(null); // To store the animation frame ID for cleanup
     const [isTensorflowReady, setIsTensorflowReady] = useState(false);
     const [isDetectorLoading, setIsDetectorLoading] = useState(true);
     const [error, setError] = useState(null);
-  
+    const canvasRef = useRef(null)
   // The `useEffect` Hook runs after the component mounts (is added to the screen).
   // It's used here to set up the webcam, initialize the pose detector, and start the pose detection loop.
   useEffect(() => {
@@ -110,6 +107,12 @@ const WebcamStream = ({ onPoseDetected, onBufferFull }) => {
     };
 
     // This asynchronous function continuously detects poses from the webcam feed.
+    // FPS and timing instrumentation
+    let frameCount = 0;
+    let lastFpsLog = performance.now();
+    let accumInferMs = 0;
+    let accumDrawMs = 0;
+
     const detectPose = async () => {
       // Ensure the detector is loaded and the video element is available before proceeding.
       if (!detectorRef.current || !videoRef.current || videoRef.current.readyState < 3) {
@@ -118,7 +121,11 @@ const WebcamStream = ({ onPoseDetected, onBufferFull }) => {
       };
 
       // `estimatePoses` is the core function from the TensorFlow.js model that analyzes the current video frame and returns an array of detected poses.
+      const t0 = performance.now();
       const poses = await detectorRef.current.estimatePoses(videoRef.current);
+      const t1 = performance.now();
+      const inferMs = t1 - t0;
+      accumInferMs += inferMs;
       const now = performance.now();
       //console.log('Detected poses:', poses[0]);
       // If at least one pose is detected...
@@ -149,13 +156,34 @@ const WebcamStream = ({ onPoseDetected, onBufferFull }) => {
         // Call the `onPoseDetected` function that was passed in as a prop, sending the first detected pose's data to the parent component.
         // onPoseDetected(poses[0]);
         // Draw the detected pose on the canvas to provide visual feedback.
+        const d0 = performance.now();
         drawPose(poses[0]);
+        const d1 = performance.now();
+        const drawMs = d1 - d0;
+        accumDrawMs += drawMs;
       }else{
          ;//console.log('No pose detected');
       }
 
       // `requestAnimationFrame` tells the browser to run `detectPose` again before the next repaint. This creates a smooth, continuous loop for real-time detection without performance issues.
       animationFrame = requestAnimationFrame(detectPose);
+
+      // FPS logging (every ~2 seconds)
+      frameCount += 1;
+      const tNow = performance.now();
+      const dt = tNow - lastFpsLog;
+      if (dt >= 2000) {
+        const fps = (frameCount * 1000) / dt;
+        const avgInfer = frameCount > 0 ? (accumInferMs / frameCount) : 0;
+        const avgDraw = frameCount > 0 ? (accumDrawMs / frameCount) : 0;
+        console.log(
+          `Perf: fps=${fps.toFixed(1)}, avg estimatePoses ms=${avgInfer.toFixed(1)}, avg draw ms=${avgDraw.toFixed(1)} over ${(dt/1000).toFixed(1)}s`
+        );
+        frameCount = 0;
+        accumInferMs = 0;
+        accumDrawMs = 0;
+        lastFpsLog = tNow;
+      }
     };
 
     const SKELETON = [
@@ -228,7 +256,7 @@ const WebcamStream = ({ onPoseDetected, onBufferFull }) => {
           tracks.forEach(track => track.stop());
       }
     };
-  }, [onBufferFull, onPoseDetected]); // The dependency array for the useEffect hook.
+  }, []); // Run once on mount to prevent re-initialization on prop changes.
 
   // The JSX returned by the component. This is what gets rendered to the screen.
   return (

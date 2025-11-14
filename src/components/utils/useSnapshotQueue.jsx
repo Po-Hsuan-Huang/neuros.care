@@ -3,11 +3,12 @@ import { useRef } from 'react';
 export function useSnapshotQueue(username) {
   const queueRef = useRef([]);
 
-  const addSnapshot = (snapshot) => {
+  const addSnapshot = (snapshot, poseName) => {
     queueRef.current.push({
       username,
       timestamp: Date.now(),
       snapshot,
+      poseName
     });
   };
 

@@ -28,7 +28,8 @@ import {
 
 import{speakText} from './utils/speechUtils'
 import{CountdownStep, CountdownBreathCycle} from './utils/countdownUtils.jsx'
-import { useUser } from '../context/UserContext';
+import { useUserContext } from '../context/UserContext';
+import { useSnapshotContext } from '../context/SnapshotContext';
 import { useSnapshotQueue } from './utils/useSnapshotQueue.jsx';
 // PoseGuide.jsx
 // Add this at the top of your file after the imports
@@ -264,14 +265,15 @@ const POSES = {
   }
 };
 
-const PoseGuide = ({ selectedPose, canvasRef }) => {
-  const { username } = useUser();
+const PoseGuide = ({ selectedPose, videoRef }) => {
+  const { username } = useUserContext();
 
   const [activeStep, setActiveStep] = useState(0);
   const [isCountingDown, setIsCountingDown] = useState(false);
   const [isSpeakText, setIsSpeakTexting] = useState(false);
 
   const beepRef = useRef(null);
+  const { addSnapshot } = useSnapshotContext();
 
   useEffect(() => {setActiveStep(0);}, [selectedPose]);
 
@@ -290,15 +292,34 @@ const PoseGuide = ({ selectedPose, canvasRef }) => {
     await takeSnapshot();
     // Maybe advance to next step here?
   };
-
-  const takeSnapshot = async () => {
-    if (canvasRef.current) {
-      canvasRef.current.toBlob((blob) => {
-        if (blob){
-          addSnapshot(blob);
-        }
-       }, 'image/png');
-    };
+  
+  const takeSnapshot = () => {
+    if (!videoRef?.current) {
+      console.warn("videoRef is not available");
+      return;
+    }
+  
+    const video = videoRef.current;
+  
+    // Create a temporary canvas
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = video.videoWidth;
+    tempCanvas.height = video.videoHeight;
+    // Ensure video is ready
+    if (video.readyState < 2) {
+      console.warn("Video not ready for snapshot");
+      return;
+    }
+    console.log("about to draw to snapshot");
+    console.log("video.readyState", video.readyState);
+    const ctx = tempCanvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+  
+    tempCanvas.toBlob((blob) => {
+      if (blob) {
+        addSnapshot(blob, currentPose.name);
+      }
+    }, 'image/png');
   };
 
   // Use the selected pose or default to mountain pose
