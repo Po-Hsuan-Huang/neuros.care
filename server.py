@@ -8,7 +8,7 @@ import time
 print('num GPU available:', len(tf.config.list_physical_devices('GPU')))
 tflite = tf.lite
 app = Flask(__name__)
-CORS(app)
+CORS(app,resources={r"/api/*": {"origins": "https://neuros.care"}})
 
 # Load the pose classifier model
 interpreter = tflite.Interpreter(model_path="src/components/pose_classifier_30.tflite")
