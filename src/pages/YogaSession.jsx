@@ -56,7 +56,11 @@ const YogaSession = () => {
               position: 'relative'
             }}
           >
-            <WebcamStream onBufferFull={handleBufferFull} videoRef={videoRef} />
+            <WebcamStream
+              onBufferFull={handleBufferFull}
+              videoRef={videoRef}
+              enableBackgroundEffect={feedback?.confidenceLevel === 'excellent'}
+            />
 
             {/* Overlay Feedback for immersive feel */}
             <Box sx={{ position: 'absolute', bottom: 24, left: 24, right: 24, maxWidth: 600, zIndex: 10 }}>
