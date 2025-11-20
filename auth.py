@@ -27,9 +27,9 @@ auth_bp.register_blueprint(google_bp, url_prefix="/google")
 def index():
     # This route is now accessed via /auth/
     if not google.authorized:
-        # The login URL is now 'google.login' because google_bp is nested under /login/google
+        # The login URL is now 'auth.google.login' because google_bp is nested under auth_bp
         return render_template_string(
-            '<a href="{{ url_for("google.login") }}">Login with Google</a>'
+            '<a href="{{ url_for("auth.google.login") }}">Login with Google</a>'
         )
     # Redirect to the welcome page if already authorized
     return redirect(url_for("auth.welcome"))
@@ -39,7 +39,7 @@ def index():
 def welcome():
     # This function is called after successful login.
     if not google.authorized:
-        return redirect(url_for("google.login"))
+        return redirect(url_for("auth.google.login"))
     
     # Logic to fetch user data and process registration/login
     resp = google.get("/oauth2/v2/userinfo")

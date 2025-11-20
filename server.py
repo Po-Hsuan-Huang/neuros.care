@@ -249,4 +249,7 @@ def health_check():
     return jsonify({"status": "healthy", "model_loaded": True})
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000,ssl_context=('cert.pem', 'key.pem'))
+    # Use SSL only in production (when USE_SSL env var is set)
+    use_ssl = os.environ.get("USE_SSL", "false").lower() == "true"
+    ssl_context = ('cert.pem', 'key.pem') if use_ssl else None
+    app.run(debug=True, port=5000, ssl_context=ssl_context)
