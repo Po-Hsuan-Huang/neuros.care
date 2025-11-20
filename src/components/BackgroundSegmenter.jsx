@@ -1,4 +1,6 @@
 import React, { useRef, useEffect } from 'react';
+import * as bodySegmentation from '@tensorflow-models/body-segmentation';
+import '@tensorflow/tfjs-backend-webgl';
 
 // Simplified Perlin Noise - same as PsychedelicSmoke but optimized for background
 class PerlinNoise {
@@ -42,7 +44,6 @@ const BackgroundSegmenter = ({ videoElement, enabled }) => {
 
         const initSegmenter = async () => {
             try {
-                const bodySegmentation = await import('@tensorflow-models/body-segmentation');
                 const model = bodySegmentation.SupportedModels.MediaPipeSelfieSegmentation;
                 const segmenterConfig = {
                     runtime: 'tfjs',

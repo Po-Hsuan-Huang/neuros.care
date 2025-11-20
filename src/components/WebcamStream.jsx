@@ -11,13 +11,12 @@ import { Box } from '@mui/material';
 import * as poseDetection from '@tensorflow-models/pose-detection';
 import '@tensorflow/tfjs-backend-webgl'; // Import the WebGL backend for better performance
 import { PointOfSaleSharp } from '@mui/icons-material';
-import BackgroundSegmenter from './BackgroundSegmenter';
 
 const BUFFER_TIME_MS = 100;
 
 // Define a React functional component called WebcamStream.
 // It takes a prop called `onPoseDetected`, which is a function that will be called whenever a new pose is detected.
-const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef, enableBackgroundEffect = false }) => {
+const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
   const detectorRef = useRef(null); // To store the pose detector instance
   const bufferRef = useRef([]); // To store the pose detected for the classifier in backend.
   const animationFrameIdRef = useRef(null); // To store the animation frame ID for cleanup
@@ -287,10 +286,6 @@ const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef, enableBackground
           transform: 'scaleX(-1)', // Mirror the canvas too
           zIndex: 1
         }}
-      />
-      <BackgroundSegmenter
-        videoElement={videoRef.current}
-        enabled={enableBackgroundEffect}
       />
     </Box>
   );
