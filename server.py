@@ -1,11 +1,15 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
+from dotenv import load_dotenv
 import numpy as np
 import tensorflow as tf
 from PoseSuggestion import suggest_corrections, compute_joint_angles, normalize_pose_name
 import time
 from auth import auth_bp
+
+# Load environment variables from .env file
+load_dotenv()
 
 print('num GPU available:', len(tf.config.list_physical_devices('GPU')))
 tflite = tf.lite
@@ -20,7 +24,6 @@ CORS(app, resources={
 })
 
 # Flask-Dance requires a secret key for session management
-# Flask-Dance requires a secret key for session management
 app.secret_key = os.environ.get("FLASK_SECRET_KEY")
 # Check to ensure it loaded (good practice)
 if not app.secret_key:
@@ -34,7 +37,8 @@ app.register_blueprint(auth_bp, url_prefix="/login")
 def home():
     return '<p>Go to the login page: <a href="/login/">/login/</a></p>'
 
-
+# If you test on HTTP locally, set: os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1" but only in development. Do not allow insecure transport in production.
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1" 
 
 # Load the pose classifier model
 interpreter = tflite.Interpreter(model_path="src/components/pose_classifier_30.tflite")
