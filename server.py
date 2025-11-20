@@ -16,7 +16,7 @@ tflite = tf.lite
 app = Flask(__name__)
 CORS(app, resources={
     r"/*": {
-        "origins": ["https://neuros.care", "http://localhost:3001", "http://localhost:5173", "http://127.0.0.1:3001"],
+        "origins": ["https://neuros.care", "http://localhost:3001", "http://127.0.0.1:3001"],
         "methods": ["GET", "POST", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"],
         "supports_credentials": True
@@ -31,7 +31,7 @@ if not app.secret_key:
     app.secret_key = "dev_secret_key_fallback"
 # Register the blueprint.
 # The url_prefix means all routes in auth.py (like /welcome) will start with /login
-app.register_blueprint(auth_bp, url_prefix="/login")
+app.register_blueprint(auth_bp)
 # --- Other Routes ---
 @app.route("/")
 def home():
