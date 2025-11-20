@@ -25,7 +25,7 @@ const YogaSession = () => {
     const res = await fetch('https://ab8da7976ce8.ngrok-free.app/api/classify-pose', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({   
+      body: JSON.stringify({
         timestamp: poseData.timestamp,
         pose: poseData.pose,
         targetPose: selectedPose
@@ -36,46 +36,65 @@ const YogaSession = () => {
     }
 
     const result = await res.json();
-    console.log('Result:',result);
+    console.log('Result:', result);
     setFeedback(result);
     return result;
   };
 
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={12}>
-        <FormControl fullWidth sx={{ mb: 3 }}>
-          <InputLabel>Select Pose</InputLabel>
-          <Select
-            value={selectedPose}
-            label="Select Pose"
-            onChange={handlePoseChange}
+    <Box sx={{ height: 'calc(100vh - 64px)', overflow: 'hidden', bgcolor: 'background.default', p: 2 }}>
+      <Grid container spacing={2} sx={{ height: '100%' }}>
+        {/* Main Video Area */}
+        <Grid item xs={12} md={8} lg={9} sx={{ height: '100%', position: 'relative' }}>
+          <Paper
+            elevation={3}
+            sx={{
+              height: '100%',
+              overflow: 'hidden',
+              borderRadius: 3,
+              bgcolor: 'black',
+              position: 'relative'
+            }}
           >
-            <MenuItem value="Half_Moon">Half Moon Pose (Ardha Chandrasana)</MenuItem>
-            <MenuItem value="Butterfly">Bound Angle / Butterfly Pose (Baddha Konasana)</MenuItem>
-            <MenuItem value="Downward_Facing_Dog">Downward-Facing Dog (Adho Mukha Svanasana)</MenuItem>
-            <MenuItem value="Dancer">Dancer's Pose (Natarajasana)</MenuItem>
-            <MenuItem value="Triangle">Triangle Pose (Trikonasana)</MenuItem>
-            <MenuItem value="Goddess">Goddess Pose (Utkata Konasana)</MenuItem>
-            <MenuItem value="Warrior_II">Warrior Pose II (Veerabhadrasana II)</MenuItem>
-            <MenuItem value="Tree">Tree Pose (Vrikshasana)</MenuItem>
+            <WebcamStream onBufferFull={handleBufferFull} videoRef={videoRef} />
 
-          </Select>
-        </FormControl>
-      </Grid>
-      <Grid item xs={12} md={8}>
-        <Paper elevation={3}>
-          <WebcamStream onBufferFull={handleBufferFull} videoRef={videoRef} />
-          <FeedbackPanel feedback={feedback} />
+            {/* Overlay Feedback for immersive feel */}
+            <Box sx={{ position: 'absolute', bottom: 24, left: 24, right: 24, maxWidth: 600, zIndex: 10 }}>
+              <FeedbackPanel feedback={feedback} />
+            </Box>
+          </Paper>
+        </Grid>
 
-        </Paper>
+        {/* Sidebar Control Area */}
+        <Grid item xs={12} md={4} lg={3} sx={{ height: '100%' }}>
+          <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto', pr: 1 }}>
+            <Paper sx={{ p: 2, borderRadius: 3 }}>
+              <FormControl fullWidth>
+                <InputLabel>Select Pose</InputLabel>
+                <Select
+                  value={selectedPose}
+                  label="Select Pose"
+                  onChange={handlePoseChange}
+                >
+                  <MenuItem value="Half_Moon">Half Moon Pose</MenuItem>
+                  <MenuItem value="Butterfly">Butterfly Pose</MenuItem>
+                  <MenuItem value="Downward_Facing_Dog">Downward-Facing Dog</MenuItem>
+                  <MenuItem value="Dancer">Dancer's Pose</MenuItem>
+                  <MenuItem value="Triangle">Triangle Pose</MenuItem>
+                  <MenuItem value="Goddess">Goddess Pose</MenuItem>
+                  <MenuItem value="Warrior_II">Warrior II</MenuItem>
+                  <MenuItem value="Tree">Tree Pose</MenuItem>
+                </Select>
+              </FormControl>
+            </Paper>
+
+            <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
+              <PoseGuide selectedPose={selectedPose} videoRef={videoRef} />
+            </Box>
+          </Box>
+        </Grid>
       </Grid>
-      <Grid item xs={12} md={4}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <PoseGuide selectedPose={selectedPose} videoRef={videoRef}  />
-        </Box>
-      </Grid>
-    </Grid>
+    </Box>
   );
 };
 

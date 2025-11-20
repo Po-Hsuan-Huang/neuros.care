@@ -17,13 +17,13 @@ const BUFFER_TIME_MS = 100;
 // Define a React functional component called WebcamStream.
 // It takes a prop called `onPoseDetected`, which is a function that will be called whenever a new pose is detected.
 const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
-    const detectorRef = useRef(null); // To store the pose detector instance
-    const bufferRef =useRef([]); // To store the pose detected for the classifier in backend.
-    const animationFrameIdRef = useRef(null); // To store the animation frame ID for cleanup
-    const [isTensorflowReady, setIsTensorflowReady] = useState(false);
-    const [isDetectorLoading, setIsDetectorLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const canvasRef = useRef(null)
+  const detectorRef = useRef(null); // To store the pose detector instance
+  const bufferRef = useRef([]); // To store the pose detected for the classifier in backend.
+  const animationFrameIdRef = useRef(null); // To store the animation frame ID for cleanup
+  const [isTensorflowReady, setIsTensorflowReady] = useState(false);
+  const [isDetectorLoading, setIsDetectorLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const canvasRef = useRef(null)
   // The `useEffect` Hook runs after the component mounts (is added to the screen).
   // It's used here to set up the webcam, initialize the pose detector, and start the pose detection loop.
   useEffect(() => {
@@ -38,10 +38,10 @@ const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
         console.log('Detector already initialized, skipping...');
         return;
       }
-    
+
       setIsDetectorLoading(true);
       setError(null);
-    
+
       try {
         await initializeTensorFlow();
         await createPoseDetector();
@@ -52,20 +52,20 @@ const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
         setIsDetectorLoading(false);
       }
     };
-    
+
     const initializeTensorFlow = async () => {
-        try {
-          // Explicitly set WebGL backend first
-          await tf.setBackend('webgl');
-          await tf.ready();
-          setIsTensorflowReady(true);
-          console.log('TensorFlow.js ready with WebGL!');
-        } catch (err) {
-          console.error('TensorFlow initialization failed:', err);
-          throw err;
-        }
-      };
-    
+      try {
+        // Explicitly set WebGL backend first
+        await tf.setBackend('webgl');
+        await tf.ready();
+        setIsTensorflowReady(true);
+        console.log('TensorFlow.js ready with WebGL!');
+      } catch (err) {
+        console.error('TensorFlow initialization failed:', err);
+        throw err;
+      }
+    };
+
     const createPoseDetector = async () => {
       const detectorConfig = {
         modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
@@ -95,8 +95,8 @@ const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
           videoRef.current.onloadedmetadata = () => {
             // Set the canvas dimensions to match the video dimensions.
             if (canvasRef.current && videoRef.current) {
-                canvasRef.current.width = videoRef.current.videoWidth;
-                canvasRef.current.height = videoRef.current.videoHeight;
+              canvasRef.current.width = videoRef.current.videoWidth;
+              canvasRef.current.height = videoRef.current.videoHeight;
             }
             detectPose(); // Start detecting poses once the video is ready.
           };
@@ -116,8 +116,8 @@ const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
     const detectPose = async () => {
       // Ensure the detector is loaded and the video element is available before proceeding.
       if (!detectorRef.current || !videoRef.current || videoRef.current.readyState < 3) {
-          animationFrame = requestAnimationFrame(detectPose);
-          return;
+        animationFrame = requestAnimationFrame(detectPose);
+        return;
       };
 
       // `estimatePoses` is the core function from the TensorFlow.js model that analyzes the current video frame and returns an array of detected poses.
@@ -130,7 +130,7 @@ const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
       //console.log('Detected poses:', poses[0]);
       // If at least one pose is detected...
       if (poses.length > 0) {
-        bufferRef.current.push({timestamp: now, pose: poses});
+        bufferRef.current.push({ timestamp: now, pose: poses });
         // Remove old frames outside the window (just in case)
         while (
           bufferRef.current.length > 0 &&
@@ -142,7 +142,7 @@ const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
         if (
           bufferRef.current.length > 1 &&
           bufferRef.current[bufferRef.current.length - 1].timestamp -
-            bufferRef.current[0].timestamp >= BUFFER_TIME_MS
+          bufferRef.current[0].timestamp >= BUFFER_TIME_MS
         ) {
           if (onBufferFull) {
             onBufferFull([...bufferRef.current]);
@@ -152,7 +152,7 @@ const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
           console.log('Buffer is flushed');
 
         }
-  
+
         // Call the `onPoseDetected` function that was passed in as a prop, sending the first detected pose's data to the parent component.
         // onPoseDetected(poses[0]);
         // Draw the detected pose on the canvas to provide visual feedback.
@@ -161,8 +161,8 @@ const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
         const d1 = performance.now();
         const drawMs = d1 - d0;
         accumDrawMs += drawMs;
-      }else{
-         ;//console.log('No pose detected');
+      } else {
+        ;//console.log('No pose detected');
       }
 
       // `requestAnimationFrame` tells the browser to run `detectPose` again before the next repaint. This creates a smooth, continuous loop for real-time detection without performance issues.
@@ -177,7 +177,7 @@ const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
         const avgInfer = frameCount > 0 ? (accumInferMs / frameCount) : 0;
         const avgDraw = frameCount > 0 ? (accumDrawMs / frameCount) : 0;
         console.log(
-          `Perf: fps=${fps.toFixed(1)}, avg estimatePoses ms=${avgInfer.toFixed(1)}, avg draw ms=${avgDraw.toFixed(1)} over ${(dt/1000).toFixed(1)}s`
+          `Perf: fps=${fps.toFixed(1)}, avg estimatePoses ms=${avgInfer.toFixed(1)}, avg draw ms=${avgDraw.toFixed(1)} over ${(dt / 1000).toFixed(1)}s`
         );
         frameCount = 0;
         accumInferMs = 0;
@@ -206,11 +206,11 @@ const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
       ['left_knee', 'left_ankle'],
       ['right_knee', 'right_ankle']
     ];
-    
+
     const drawPose = (pose) => {
       const ctx = canvasRef.current.getContext('2d');
       ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    
+
       // Draw keypoints (landmarks)
       for (const keypoint of pose.keypoints) {
         if (keypoint.score > 0.5) {
@@ -220,13 +220,13 @@ const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
           ctx.fill();
         }
       }
-    
+
       // Map keypoint names for easy access
       const keypointsMap = {};
       for (const kp of pose.keypoints) {
         keypointsMap[kp.name] = kp;
       }
-    
+
       // Draw skeleton lines
       for (const [from, to] of SKELETON) {
         const kp1 = keypointsMap[from];
@@ -241,7 +241,7 @@ const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
         }
       }
     };
-    
+
     // Call the setup functions when the component mounts.
     initializeDetector();
     setupWebcam();
@@ -252,8 +252,8 @@ const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
       cancelAnimationFrame(animationFrame);
       // You might also want to stop the webcam stream here.
       if (videoRef.current && videoRef.current.srcObject) {
-          const tracks = videoRef.current.srcObject.getTracks();
-          tracks.forEach(track => track.stop());
+        const tracks = videoRef.current.srcObject.getTracks();
+        tracks.forEach(track => track.stop());
       }
     };
   }, []); // Run once on mount to prevent re-initialization on prop changes.
@@ -261,13 +261,18 @@ const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
   // The JSX returned by the component. This is what gets rendered to the screen.
   return (
     // The Box component acts as a container. `position: 'relative'` is important so the canvas can be positioned absolutely within it.
-    <Box sx={{ position: 'relative', width: '640px', height: '480px' }}>
+    <Box sx={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', bgcolor: 'black', borderRadius: 4 }}>
       <video
         ref={videoRef} // Attach the ref to the video element.
         autoPlay // The video will start playing as soon as it can.
         playsInline // Important for playback on mobile browsers.
         muted // Mute the video to allow autoplay in most browsers.
-        style={{ width: '100%', height: '100%' }}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover', // Ensure video fills the container
+          transform: 'scaleX(-1)' // Mirror effect for natural feel
+        }}
       />
       <canvas
         ref={canvasRef} // Attach the ref to the canvas element.
@@ -277,6 +282,8 @@ const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
           left: 0,
           width: '100%',
           height: '100%',
+          objectFit: 'cover',
+          transform: 'scaleX(-1)' // Mirror the canvas too
         }}
       />
     </Box>

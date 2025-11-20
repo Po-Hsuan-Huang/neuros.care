@@ -1,7 +1,7 @@
-import React,{useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Paper, Typography, Box, Chip, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import{speakText} from './utils/speechUtils'
+import { speakText } from './utils/speechUtils'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import StraightenIcon from '@mui/icons-material/Straighten';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
@@ -10,8 +10,11 @@ import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 const FeedbackContainer = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
-  backgroundColor: theme.palette.background.paper,
+  backgroundColor: 'rgba(30, 30, 30, 0.85)', // Semi-transparent dark background
+  backdropFilter: 'blur(10px)', // Glassmorphism effect
   borderRadius: theme.shape.borderRadius,
+  border: `1px solid ${theme.palette.divider}`,
+  color: theme.palette.text.primary,
 }));
 
 const ConfidenceChip = styled(Chip)(({ theme, confidencelevel }) => ({
@@ -34,7 +37,7 @@ const ConfidenceChip = styled(Chip)(({ theme, confidencelevel }) => ({
     color: theme.palette.error.contrastText,
   }),
 }));
-  
+
 const CorrectionChip = styled(Chip)(({ theme, correction }) => ({
   fontWeight: 'bold',
   marginTop: theme.spacing(1),
@@ -104,7 +107,7 @@ const FeedbackPanel = ({ feedback, onDetected }) => {
             <Typography variant="body1" gutterBottom>
               {feedback.message}
             </Typography>
-            
+
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
               <Typography variant="body2" color="text.secondary">
                 Confidence:
