@@ -2,99 +2,103 @@ import { createTheme } from '@mui/material';
 
 export const theme = createTheme({
   palette: {
+    mode: 'dark',
     primary: {
-      main: '#4A6670', // Calming blue-grey - promotes trust and stability
-      light: '#718792', // Softer shade for hover states and highlights
-      dark: '#334852', // Deeper tone for active states and emphasis
-      contrastText: '#FFFFFF', // Ensuring readable text on primary colors
+      main: '#81C784', // Soft green for primary actions (calming, nature)
+      light: '#B2FAB4',
+      dark: '#519657',
+      contrastText: '#000000',
     },
     secondary: {
-      main: '#8BA888', // Soft sage green - connects to nature and growth
-      light: '#A8C1A5', // Gentle highlight for interactive elements
-      dark: '#6E8F6B', // Grounding shade for focused states
-      contrastText: '#333333', // Accessible text contrast
+      main: '#64B5F6', // Soft blue for secondary actions (water, flow)
+      light: '#9BE7FF',
+      dark: '#2286C3',
+      contrastText: '#000000',
     },
     background: {
-      default: '#F5F5F5', // Soft off-white for reduced eye strain
-      paper: '#FFFFFF', // Clean white for content areas
-    },
-    error: {
-      main: '#B5838D', // Muted rose instead of harsh red for errors
-      light: '#E5B3BC',
-      dark: '#925A63',
-    },
-    success: {
-      main: '#7FA685', // Gentle green for success states
-      light: '#A3C2A9',
-      dark: '#5C8A62',
+      default: '#121212', // Deep dark background
+      paper: '#1E1E1E',   // Slightly lighter for cards/surfaces
     },
     text: {
-      primary: '#333333', // Soft black for main text
-      secondary: '#666666', // Gentle grey for secondary text
-    }
+      primary: '#E0E0E0',
+      secondary: '#B0B0B0',
+    },
+    error: {
+      main: '#CF6679',
+    },
+    success: {
+      main: '#81C784',
+    },
   },
   typography: {
-    fontFamily: 'Nunito, sans-serif', // Rounded, friendly primary font
+    fontFamily: '"Outfit", "Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
-      fontSize: '2.5rem',
-      fontWeight: 600,
-      lineHeight: 1.4, // Improved readability
-      letterSpacing: '-0.01em', // Slightly tighter for headings
+      fontWeight: 700,
+      fontSize: '3.5rem',
+      letterSpacing: '-0.02em',
     },
     h2: {
-      fontSize: '2rem',
-      fontWeight: 500,
-      lineHeight: 1.4,
+      fontWeight: 600,
+      fontSize: '2.5rem',
+      letterSpacing: '-0.01em',
     },
     h3: {
-      fontSize: '1.75rem',
+      fontWeight: 600,
+      fontSize: '2rem',
+    },
+    h4: {
       fontWeight: 500,
-      lineHeight: 1.4,
+      fontSize: '1.5rem',
     },
     body1: {
-      fontSize: '1rem',
-      fontFamily: 'Open Sans, sans-serif', // Clear, readable body font
-      lineHeight: 1.6, // Generous line height for better readability
-      letterSpacing: '0.01em', // Slightly loose for body text
+      fontSize: '1.1rem',
+      lineHeight: 1.6,
     },
     button: {
-      textTransform: 'none', // Avoiding aggressive all-caps
-      fontWeight: 500,
-    }
+      textTransform: 'none',
+      fontWeight: 600,
+      fontSize: '1rem',
+    },
   },
   shape: {
-    borderRadius: 12, // Soft corners for all components
+    borderRadius: 16,
   },
-  transitions: {
-    duration: {
-      shortest: 150,
-      shorter: 200,
-      short: 250,
-      standard: 300, // Matches natural breathing rhythm
-      complex: 375,
-      enteringScreen: 225,
-      leavingScreen: 195,
-    },
-    easing: {
-      easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)', // Smooth, natural transitions
-      ease: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
-    },
-  },
-  spacing: (factor) => `${0.8 * factor}rem`, // Base spacing unit for consistency
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          padding: '0.8rem 1.6rem', // More generous click targets
-          borderRadius: '2rem', // Pill-shaped buttons feel less aggressive
+          borderRadius: 50, // Pill shape
+          padding: '10px 24px',
+          boxShadow: 'none',
+          '&:hover': {
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+          },
+        },
+        containedPrimary: {
+          background: 'linear-gradient(45deg, #66BB6A 30%, #81C784 90%)',
+        },
+        containedSecondary: {
+          background: 'linear-gradient(45deg, #42A5F5 30%, #64B5F6 90%)',
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none', // Remove default MUI overlay
+        },
+        elevation1: {
+          boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+        },
+        elevation3: {
+          boxShadow: '0 8px 30px rgba(0,0,0,0.35)',
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)', // Subtle shadows
-          borderRadius: '1rem',
+          borderRadius: 24,
         },
       },
     },

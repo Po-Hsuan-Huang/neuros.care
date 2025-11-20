@@ -1,14 +1,40 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import os
 import numpy as np
 import tensorflow as tf
 from PoseSuggestion import suggest_corrections, compute_joint_angles, normalize_pose_name
 import time
+from auth import auth_bp
 
 print('num GPU available:', len(tf.config.list_physical_devices('GPU')))
 tflite = tf.lite
 app = Flask(__name__)
-CORS(app,resources={r"/api/*": {"origins": "https://neuros.care"}})
+CORS(app, resources={
+    r"/*": {
+        "origins": ["https://neuros.care", "http://localhost:3001", "http://localhost:5173", "http://127.0.0.1:3001"],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True
+    }
+})
+
+# Flask-Dance requires a secret key for session management
+# Flask-Dance requires a secret key for session management
+app.secret_key = os.environ.get("FLASK_SECRET_KEY")
+# Check to ensure it loaded (good practice)
+if not app.secret_key:
+    print("WARNING: FLASK_SECRET_KEY not found. Using default for development.")
+    app.secret_key = "dev_secret_key_fallback"
+# Register the blueprint.
+# The url_prefix means all routes in auth.py (like /welcome) will start with /login
+app.register_blueprint(auth_bp, url_prefix="/login")
+# --- Other Routes ---
+@app.route("/")
+def home():
+    return '<p>Go to the login page: <a href="/login/">/login/</a></p>'
+
+
 
 # Load the pose classifier model
 interpreter = tflite.Interpreter(model_path="src/components/pose_classifier_30.tflite")
