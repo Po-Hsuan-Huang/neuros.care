@@ -16,7 +16,7 @@ tflite = tf.lite
 app = Flask(__name__, static_folder="dist", static_url_path="")
 CORS(app, resources={
     r"/*": {
-        "origins": ["https://neuros.care", "http://localhost:3001","http://localhost:3000", "http://127.0.0.1:3001"],
+        "origins": ["https://dev.neuros.care", "https://neuros.care", "http://localhost:3001","http://localhost:3000", "http://127.0.0.1:3001"],
         "methods": ["GET", "POST", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"],
         "supports_credentials": True
