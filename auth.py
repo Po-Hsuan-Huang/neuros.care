@@ -62,7 +62,7 @@ def welcome():
         from flask import session
         session["username"] = name
         # Redirect to React app entry point
-        return redirect(url_for("auth.app"))
+        return redirect(url_for("auth.index"))
     
     return "Failed to fetch user data.", 500
 
