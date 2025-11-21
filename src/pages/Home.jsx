@@ -1,16 +1,17 @@
 import React from 'react';
 import GoogleLoginButton from '../components/GoogleLoginButton';
 import { useUserContext } from '../context/UserContext';
-import { Typography, Box, Button, Container, Paper } from '@mui/material';
+import { Typography, Box, Button, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import SelfImprovementIcon from '@mui/icons-material/SelfImprovement';
+import PsychedelicSmoke from '../components/PsychedelicSmoke';
 
 const Home = () => {
   const { username } = useUserContext();
   const navigate = useNavigate();
 
   const mainContent = username ? (
-    <Box sx={{ textAlign: 'center', mt: 8, maxWidth: 800, mx: 'auto' }}>
+    <Box sx={{ textAlign: 'center', mt: 8, maxWidth: 900, mx: 'auto', position: 'relative', zIndex: 1 }}>
       <SelfImprovementIcon sx={{ fontSize: 80, color: 'primary.main', mb: 2 }} />
       <Typography variant="h1" gutterBottom sx={{
         background: 'linear-gradient(45deg, #81C784 30%, #64B5F6 90%)',
@@ -21,11 +22,7 @@ const Home = () => {
         Welcome Back, {username}
       </Typography>
 
-      <Paper elevation={0} sx={{ p: 4, mb: 6, bgcolor: 'rgba(255,255,255,0.05)', borderRadius: 4 }}>
-        <Typography variant="h4" gutterBottom sx={{ fontStyle: 'italic', color: 'text.secondary' }}>
-          "It is under the greatest adversity that there exists the greatest potential for doing good, both for oneself and others."
-        </Typography>
-      </Paper>
+      <PsychedelicSmoke />
 
       <Button
         variant="contained"
@@ -36,7 +33,8 @@ const Home = () => {
           px: 6,
           py: 2,
           borderRadius: 50,
-          textTransform: 'none'
+          textTransform: 'none',
+          mt: 4
         }}
       >
         Start Your Session
@@ -62,4 +60,3 @@ const Home = () => {
 };
 
 export default Home;
-

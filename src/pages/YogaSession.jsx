@@ -3,6 +3,7 @@ import { Box, Paper, Grid, Typography, FormControl, InputLabel, Select, MenuItem
 import WebcamStream from '../components/WebcamStream';
 import FeedbackPanel from '../components/FeedbackPanel';
 import PoseGuide from '../components/PoseGuide';
+import PsychedelicSmoke from '../components/PsychedelicSmoke';
 
 const YogaSession = () => {
   const [feedback, setFeedback] = useState(null);
@@ -51,12 +52,33 @@ const YogaSession = () => {
             sx={{
               height: '100%',
               overflow: 'hidden',
-              borderRadius: 3,
               bgcolor: 'black',
               position: 'relative'
             }}
           >
-            <WebcamStream onBufferFull={handleBufferFull} videoRef={videoRef} />
+            {feedback?.confidenceLevel === 'excellent' && <PsychedelicSmoke />}
+
+            <WebcamStream
+              onBufferFull={handleBufferFull}
+              videoRef={videoRef}
+            />
+
+            {/* Overlay smoke on top of video for immersive effect */}
+            {feedback?.confidenceLevel === 'excellent' && (
+              <Box sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                zIndex: 2,
+                opacity: 0.4,
+                pointerEvents: 'none',
+                mixBlendMode: 'screen'
+              }}>
+                <PsychedelicSmoke />
+              </Box>
+            )}
 
             {/* Overlay Feedback for immersive feel */}
             <Box sx={{ position: 'absolute', bottom: 24, left: 24, right: 24, maxWidth: 600, zIndex: 10 }}>

@@ -283,7 +283,8 @@ const WebcamStream = ({ onPoseDetected, onBufferFull, videoRef }) => {
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          transform: 'scaleX(-1)' // Mirror the canvas too
+          transform: 'scaleX(-1)', // Mirror the canvas too
+          zIndex: 1
         }}
       />
     </Box>

@@ -1,32 +1,55 @@
 import React from 'react';
-import { Button } from '@mui/material';
-import { useUserContext } from '../context/UserContext'; 
+import { Button, Box, Typography } from '@mui/material';
+import GoogleIcon from '@mui/icons-material/Google';
+import { useUserContext } from '../context/UserContext';
 
 // Define the URL for your Flask-Dance login blueprint
-// Use your production domain (dev.neuros.care)
-const LOGIN_URL = "https://dev.neuros.care/login/"; 
+const LOGIN_URL = "http://localhost:5000/google/login";
 
 function GoogleLoginButton() {
-  // Assuming useUserContext provides 'username' or 'isLoggedIn'
-  const { username } = useUserContext(); 
+  const { username } = useUserContext();
 
   if (username) {
-    // If the user is logged in, show a welcome message
-    return <div>Welcome back, {username}!</div>;
+    return (
+      <Box sx={{ textAlign: 'center', p: 3 }}>
+        <Typography variant="h5" sx={{ color: 'primary.main' }}>
+          Welcome back, {username}!
+        </Typography>
+      </Box>
+    );
   }
 
-  // If the user is NOT logged in, show the login button.
-  // We use a standard anchor tag <a> to redirect the browser to the Flask backend's OAuth starting URL.
   return (
-    <Button 
-      variant="contained" 
-      color="primary"
-      // CRUCIAL: Direct link to your Flask backend's login route
-      href={LOGIN_URL} 
-      sx={{ mt: 2 }} // Example styling
-    >
-      Login with Google 🚀
-    </Button>
+    <Box sx={{ textAlign: 'center', mt: 4 }}>
+      <Button
+        variant="contained"
+        size="large"
+        href={LOGIN_URL}
+        startIcon={<GoogleIcon />}
+        sx={{
+          background: 'linear-gradient(45deg, #4285F4 30%, #34A853 90%)',
+          color: 'white',
+          fontSize: '1.1rem',
+          px: 6,
+          py: 2,
+          borderRadius: 50,
+          textTransform: 'none',
+          boxShadow: '0 4px 20px rgba(66, 133, 244, 0.4)',
+          '&:hover': {
+            background: 'linear-gradient(45deg, #3367D6 30%, #2D8E47 90%)',
+            boxShadow: '0 6px 24px rgba(66, 133, 244, 0.6)',
+            transform: 'translateY(-2px)',
+            transition: 'all 0.3s ease'
+          }
+        }}
+      >
+        Sign in with Google
+      </Button>
+
+      <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary', maxWidth: 400, mx: 'auto' }}>
+        Securely sign in to access your personalized yoga journey and track your progress.
+      </Typography>
+    </Box>
   );
 }
 
