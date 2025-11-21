@@ -24,7 +24,6 @@ auth_bp.register_blueprint(google_bp)
 
 
 @auth_bp.route("/")
-@auth_bp.route("/")
 def index():
     # Simple landing page with a clear login prompt
     return render_template_string(
@@ -62,7 +61,8 @@ def welcome():
         from flask import session
         session["username"] = name
         # Redirect to React app entry point
-        return redirect("http://dev.neuros.care")
+        return render_template("index.html", user_name=name)
+        #return redirect(url_for("index"))
     
     return "Failed to fetch user data.", 500
 
