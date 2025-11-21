@@ -13,7 +13,7 @@ load_dotenv()
 
 print('num GPU available:', len(tf.config.list_physical_devices('GPU')))
 tflite = tf.lite
-app = Flask(__name__)
+app = Flask(__name__, static_folder="dist", static_url_path="")
 CORS(app, resources={
     r"/*": {
         "origins": ["https://neuros.care", "http://localhost:3001","http://localhost:3000", "http://127.0.0.1:3001"],
@@ -247,6 +247,15 @@ def classify_pose():
 @app.route("/health", methods=["GET"])
 def health_check():
     return jsonify({"status": "healthy", "model_loaded": True})
+
+@app.route("/api/userinfo", methods=["GET"])
+def userinfo():
+    from flask import session
+    username = session.get("username")
+    if username:
+        return jsonify({"username": username})
+    else:
+        return jsonify({"error": "No user logged in"}), 401
 
 if __name__ == "__main__":
     # Use SSL only in production (when USE_SSL env var is set)
