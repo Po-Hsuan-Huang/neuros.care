@@ -24,15 +24,24 @@ auth_bp.register_blueprint(google_bp)
 
 
 @auth_bp.route("/")
+@auth_bp.route("/")
 def index():
-    # This route is now accessed via /auth/
-    if not google.authorized:
-        # The login URL is now 'auth.google.login' because google_bp is nested under auth_bp
-        return render_template_string(
-            '<a href="{{ url_for("auth.google.login") }}">Login with Google</a>'
-        )
-    # Redirect to the welcome page if already authorized
-    return redirect(url_for("auth.welcome"))
+    # Simple landing page with a clear login prompt
+    return render_template_string(
+        """
+        <html>
+            <head><title>Login</title></head>
+            <body style='display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:Arial;'>
+                <h2>Login with Google</h2>
+                <a href='{{ url_for('auth.google.login') }}' style='padding:10px 20px;background:#4285F4;color:white;border-radius:5px;text-decoration:none;'>
+                    Sign in with Google
+                </a>
+                <p>After signing in you will be redirected to the welcome page.</p>
+            </body>
+        </html>
+        """
+    )
+
 
 
 @auth_bp.route("/welcome")
@@ -49,7 +58,11 @@ def welcome():
         user_info = resp.json()
         name = user_info.get("name")
         email = user_info.get("email")
-        return f"<h1>Auth Successful!</h1><p>Welcome, {name} ({email})!</p>"
+        # Store username in session for frontend consumption
+        from flask import session
+        session["username"] = name
+        # Redirect to React app entry point
+        return redirect(url_for("auth.app"))
     
     return "Failed to fetch user data.", 500
 
