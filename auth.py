@@ -15,7 +15,7 @@ auth_bp = Blueprint('auth', __name__)
 google_bp = make_google_blueprint(
     client_id=GOOGLE_CLIENT_ID,
     client_secret=GOOGLE_CLIENT_SECRET,
-    scope=["profile", "email"],
+    scope=["openid", "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"],
     redirect_to="auth.welcome" # IMPORTANT: Must use 'blueprint_name.function_name'
 )
 
