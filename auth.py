@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, url_for, render_template_string
+from flask import Blueprint, redirect, url_for, render_template_string, render_template
 from flask_dance.contrib.google import make_google_blueprint, google
 import os
 
