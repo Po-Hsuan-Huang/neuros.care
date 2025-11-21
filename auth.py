@@ -20,7 +20,7 @@ google_bp = make_google_blueprint(
 )
 
 # Register the Google blueprint with your main auth blueprint
-auth_bp.register_blueprint(google_bp, url_prefix="/google")
+auth_bp.register_blueprint(google_bp)
 
 
 @auth_bp.route("/")

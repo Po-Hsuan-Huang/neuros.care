@@ -71,7 +71,7 @@ const YogaSession = () => {
                 left: 0,
                 width: '100%',
                 height: '100%',
-                zIndex: 3,
+                zIndex: 2,
                 opacity: 0.4,
                 pointerEvents: 'none',
                 mixBlendMode: 'screen'
