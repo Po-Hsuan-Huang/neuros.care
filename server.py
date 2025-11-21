@@ -31,7 +31,7 @@ if not app.secret_key:
     app.secret_key = "dev_secret_key_fallback"
 # Register the blueprint.
 # The url_prefix means all routes in auth.py (like /welcome) will start with /login
-app.register_blueprint(auth_bp, url_prefix="/login")
+app.register_blueprint(auth_bp)
 # --- Other Routes ---
 @app.route("/")
 def home():
