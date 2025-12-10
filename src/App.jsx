@@ -7,8 +7,9 @@ import Home from './pages/Home';
 import YogaSession from './pages/YogaSession';
 import Profile from './pages/Profile';
 import Progress from './pages/Progress';
-import { useUserContext } from './context/UserContext'; 
+import { useUserContext } from './context/UserContext';
 import { SnapshotProvider } from './context/SnapshotContext';
+import SessionCallback from './pages/SessionCallback'; // create this next
 
 function App() {
   const { username } = useUserContext();
@@ -21,7 +22,8 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/session" element={<YogaSession />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/progress" element={<Progress />} /> 
+              <Route path="/progress" element={<Progress />} />
+              <Route path="/auth/callback" element={<SessionCallback />} />
             </Routes>
           </Layout>
         </BrowserRouter>

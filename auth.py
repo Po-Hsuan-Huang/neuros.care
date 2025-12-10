@@ -1,12 +1,18 @@
-from flask import Blueprint, redirect, url_for, render_template_string, render_template
+from flask import Blueprint, redirect, url_for, session, jsonify
 from flask_dance.contrib.google import make_google_blueprint, google
 import os
+from dotenv import load_dotenv
+from flask_dance.consumer.storage.session import SessionStorage
+
 
 # --- Configuration (Define outside this file or use environment variables!) ---
 # You need a secure place to store these, e.g., in a config file or .env
-GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_OAUTH_CLIENT_ID", "YOUR_CLIENT_ID_HERE")
-GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET", "YOUR_CLIENT_SECRET_HERE")
+load_dotenv()
 
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_OAUTH_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET")
+print(GOOGLE_CLIENT_ID)
+print(GOOGLE_CLIENT_SECRET)
 # Create the Blueprint
 # Note: Use a short, unique name for the Blueprint instance, e.g., 'auth'
 auth_bp = Blueprint('auth', __name__)
@@ -15,55 +21,59 @@ auth_bp = Blueprint('auth', __name__)
 google_bp = make_google_blueprint(
     client_id=GOOGLE_CLIENT_ID,
     client_secret=GOOGLE_CLIENT_SECRET,
-    scope=["openid", "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"],
-    redirect_to="auth.welcome" # IMPORTANT: Must use 'blueprint_name.function_name'
+    scope=["openid", "https://www.googleapis.com/auth/userinfo.email",
+                     "https://www.googleapis.com/auth/userinfo.profile"],
+    redirect_to="auth.google_authorized",
+    login_url="/google_login"
 )
 
 # Register the Google blueprint with your main auth blueprint
-auth_bp.register_blueprint(google_bp)
-
-
-@auth_bp.route("/")
-def index():
-    # Simple landing page with a clear login prompt
-    return render_template_string(
-        """
-        <html>
-            <head><title>Login</title></head>
-            <body style='display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:Arial;'>
-                <h2>Login with Google</h2>
-                <a href='{{ url_for('auth.google.login') }}' style='padding:10px 20px;background:#4285F4;color:white;border-radius:5px;text-decoration:none;'>
-                    Sign in with Google
-                </a>
-                <p>After signing in you will be redirected to the welcome page.</p>
-            </body>
-        </html>
-        """
-    )
+auth_bp.register_blueprint(google_bp,url_prefix="/login")
 
 
 
-@auth_bp.route("/welcome")
-def welcome():
-    # This function is called after successful login.
+@auth_bp.route('/google_login')
+def google_login():
+
+    # If not logged in with Google, start the OAuth dance
+    if not google.authorized:  # Flask-Dance style.[web:16]
+        return redirect(url_for("auth.google.login"))   # <‑‑ key line
+    # If already authorized, just go to the callback/handler
+    return redirect(url_for("auth.google_authorized", _external=True))
+
+
+@auth_bp.route("/google_authorized")
+def google_authorized():
     if not google.authorized:
-        return redirect(url_for("auth.google.login"))
-    
-    # Logic to fetch user data and process registration/login
-    resp = google.get("/oauth2/v2/userinfo")
-    # ... (Database logic from previous example goes here) ...
-    
-    if resp.ok:
-        user_info = resp.json()
-        name = user_info.get("name")
-        email = user_info.get("email")
-        # Store username in session for frontend consumption
-        from flask import session
-        session["username"] = name
-        # Redirect to React app entry point
-        return redirect("https://dev.neuros.care")
-        #return redirect(url_for("index"))
-    
-    return "Failed to fetch user data.", 500
+        return redirect(url_for("auth.google_login"))
 
+    # Get userinfo from Google
+    try:
+        resp = google.get("/oauth2/v2/userinfo")  # works with email+profile scopes [web:13]
+        if not resp.ok:
+            return redirect("http://localhost:3000/login")
+    except Exception as e:
+        for key in list(session.keys()):
+                    if 'google' in key or 'oauth' in key or 'token' in key:
+                        session.pop(key, None)
+        return redirect(url_for("auth.google_login"))
+
+    data = resp.json()
+    user = {
+        "username": data.get("name") or data.get("given_name"),
+        "email": data.get("email"),
+    }
+    # store in Flask session so /api/current_user can see it
+    session["user"] = user
+
+    # send user data to frontend
+    return redirect("http://localhost:3000/auth/callback")
+    
+
+@auth_bp.route("/api/current_user")
+def current_user():
+    user = session.get("user")
+    if not user:
+        return jsonify({"user": None}), 200
+    return jsonify({"user": user}), 200
 # You will not run app.run() here.

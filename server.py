@@ -35,7 +35,7 @@ app.register_blueprint(auth_bp)
 # --- Other Routes ---
 @app.route("/")
 def home():
-    return '<p>Go to the login page: <a href="/login/">/login/</a></p>'
+    return '<p>Go to the login page: <a href="/google_login/">/google_login/</a></p>'
 
 # If you test on HTTP locally, set: os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1" but only in development. Do not allow insecure transport in production.
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1" 

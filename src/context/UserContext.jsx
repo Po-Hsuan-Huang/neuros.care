@@ -5,26 +5,36 @@ const UserContext = createContext();
 export const useUserContext = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const refreshUser = () => setRefreshKey(k => k + 1);  // Add this
 
   // Fetch username from backend if logged in
-  useEffect(() => {
-    fetch('/api/userinfo')
-      .then((res) => {
-        if (!res.ok) throw new Error('Not logged in');
-        return res.json();
-      })
-      .then((data) => {
-        if (data.username) setUsername(data.username);
-      })
-      .catch(() => {
-        // No user logged in; keep default empty username
-        setUsername('');
+  const fetchUser = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/current_user", {
+        credentials: "include", // send Flask session cookie [web:5]
       });
-  }, []);
+      const data = await res.json();
+      if (data.user) {
+        setUsername(data.user.username);
+        setEmail(data.user.email);
+      } else {
+        setUsername(null);
+        setEmail(null);
+      }
+    } catch (e) {
+      console.error("Failed to load user", e);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, [refreshKey]);
 
   return (
-    <UserContext.Provider value={{ username, setUsername }}>
+    <UserContext.Provider value={{ username, email, refreshUser }}>
       {children}
     </UserContext.Provider>
   );

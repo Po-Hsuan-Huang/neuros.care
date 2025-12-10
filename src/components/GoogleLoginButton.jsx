@@ -4,7 +4,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import { useUserContext } from '../context/UserContext';
 
 // Define the URL for your Flask-Dance login blueprint
-const LOGIN_URL = "http://localhost:5000/google/login";
+const LOGIN_URL = "http://localhost:5000/google_login";
 
 function GoogleLoginButton() {
   const { username } = useUserContext();
