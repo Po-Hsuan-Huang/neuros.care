@@ -1,5 +1,8 @@
 # Project Name: AI Yoga Assistant
 
+[![IMAGE1](REAME_IMG.jpg)]([https://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE](https://youtu.be/8DU33pLZs0I))
+
+
 ## Overview
 An AI-powered yoga assistant that provides real-time feedback on users' poses using a custom-trained deep learning model integrated into a full-stack web application. Designed to help users improve posture alignment and form during home workouts.
 
