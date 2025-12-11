@@ -1,6 +1,6 @@
 # Project Name: AI Yoga Assistant
 
-[![IMAGE1](REAME_IMG.png)]([https://youtu.be/8DU33pLZs0I](https://youtu.be/8DU33pLZs0I))
+[![IMAGE1](README_IMG.png)]([https://youtu.be/8DU33pLZs0I](https://youtu.be/8DU33pLZs0I))
 
 
 ## Overview
