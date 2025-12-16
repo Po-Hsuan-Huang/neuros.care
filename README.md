@@ -1,4 +1,6 @@
-# Project Name: AI Yoga Assistant
+# Project Name: AI Yoga Assistant 
+
+# Last Update Dec 16 2025
 
 [![Click To Watch the Video.](README_IMG.png)](https://www.youtube.com/watch?v=8DU33pLZs0I)
 
