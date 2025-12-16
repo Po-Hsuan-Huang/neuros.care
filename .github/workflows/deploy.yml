@@ -44,7 +44,14 @@ jobs:
       - name: Print file timestamps (mtime)
         run: |
           echo "File modification times in dist:"
-          find dist -type f -exec stat --format='%y  %n' {} \;    
+          find dist -type f -exec stat --format='%y  %n' {} \;   
+
+      - name: Deep inspect dist
+        run: |
+          echo "Tree:"
+          find dist -maxdepth 3 -print
+          echo "Disk usage:"
+          du -ah dist
 
       # 📦 Optional: Upload build output as artifact (VERY helpful)
       - name: Upload dist as artifact
