@@ -4,34 +4,59 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main # Trigger on pushes to the 'main' branch
+      - main
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest # Use a Linux runner
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4 # Check out your repository code
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Specify Node.js version (adjust as needed)
+          node-version: '20'
 
       - name: Install Dependencies
-        run: npm install --legacy-peer-deps # Or 'yarn install' if you use Yarn
+        run: npm install --legacy-peer-deps
 
       - name: Build Project
-        run: npm run build # Or 'yarn build'. This creates your production build (e.g., 'build' or 'dist' folder)
+        run: npm run build
+
+      # 🔍 Confirm build output exists
+      - name: Check dist directory
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "List root files:"
+          ls -la
+          echo "List dist directory:"
+          ls -la dist || echo "❌ dist directory not found"
+
+      # 🔍 Print ALL files that will be deployed
+      - name: Print files to be deployed
+        run: |
+          echo "Files to be deployed from dist:"
+          find dist -type f
+          
+      - name: Print file timestamps (mtime)
+        run: |
+          echo "File modification times in dist:"
+          find dist -type f -exec stat --format='%y  %n' {} \;    
+
+      # 📦 Optional: Upload build output as artifact (VERY helpful)
+      - name: Upload dist as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-build
+          path: dist
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3 # Action to deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }} # GitHub's built-in token
-          publish_dir: ./dist # The directory containing your built static files (e.g., 'build', 'dist', 'public')
-          publish_branch: gh-pages # The branch to publish to (create if it doesn't exist)
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
           cname: neuros.care
-          # For project pages, ensure your 'homepage' in package.json is set correctly.
-          # For user/organization pages, set publish_dir to the root of your main branch,
-          # and change publish_branch to 'main' if you want to serve from main.
