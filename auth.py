@@ -11,6 +11,9 @@ load_dotenv()
 
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_OAUTH_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET")
+ENV = os.getenv("FLASK_ENV", "production")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000" if ENV=="development" else "https://neuros.care")
+print(FRONTEND_URL)
 print(GOOGLE_CLIENT_ID)
 print(GOOGLE_CLIENT_SECRET)
 # Create the Blueprint
@@ -51,7 +54,7 @@ def google_authorized():
     try:
         resp = google.get("/oauth2/v2/userinfo")  # works with email+profile scopes [web:13]
         if not resp.ok:
-            return redirect("http://localhost:3000/login")
+            return redirect(f"{FRONTEND_URL}/login")
     except Exception as e:
         for key in list(session.keys()):
                     if 'google' in key or 'oauth' in key or 'token' in key:
@@ -67,7 +70,7 @@ def google_authorized():
     session["user"] = user
 
     # send user data to frontend
-    return redirect("http://localhost:3000/auth/callback")
+    return redirect(f"{FRONTEND_URL}/auth/callback")
     
 
 @auth_bp.route("/api/current_user")
