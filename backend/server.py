@@ -21,7 +21,7 @@ CORS(app, resources={
         "allow_headers": ["Content-Type", "Authorization"],
         "supports_credentials": True
     }
-})
+    })
 
 # Flask-Dance requires a secret key for session management
 app.secret_key = os.environ.get("FLASK_SECRET_KEY")
@@ -258,7 +258,39 @@ def userinfo():
         return jsonify({"error": "No user logged in"}), 401
 
 if __name__ == "__main__":
-    # Use SSL only in production (when USE_SSL env var is set)
-    use_ssl = os.environ.get("USE_SSL", "false").lower() == "true"
-    ssl_context = ('cert.pem', 'key.pem') if use_ssl else None
-    app.run(debug=True, port=5000, ssl_context=ssl_context)
+    # 1. Determine if we are on Render or Local
+    # Render always sets the PORT environment variable automatically
+    port = int(os.environ.get("PORT", 5000))
+    
+    # 2. Check if we are running locally and want SSL
+    # Only use this for local testing of webcam/OAuth features
+    is_local = os.environ.get("RENDER") is None # Render sets a 'RENDER' env var to 'true'
+    
+    if is_local:
+        print("Running locally with optional SSL...")
+        # Use your local pem files only if they exist
+        # This is helpful for testing MediaPipe/Webcam locally
+        app.run(host='127.0.0.1', port=port, debug=True)
+    else:
+        # 3. PRODUCTION MODE (Render)
+        # We do NOT use ssl_context here. Render handles HTTPS for us.
+        app.run(host='0.0.0.0', port=port)
+
+    # Cloudflare tunneling setting
+
+    # However, I have hit a fundamental security wall called Private Network Access (PNA) and Mixed Content.
+    # Browsers block this for two reasons:
+
+    # Security (The Error You See): A public website (neuros.care) is not allowed to scan 
+    # or connect to devices on your local private network (localhost).
+    #  This prevents malicious websites from hacking your router or printer.
+
+    # Logic (The Real Issue): Even if this worked for you, it would fail for everyone else. 
+    # When I visit neuros.care on my computer, the code will try to connect to my localhost:5000, 
+    # which doesn't exist. My computer cannot reach the server running on your computer.
+    
+    # # Use SSL only in production (when USE_SSL env var is set)
+    # use_ssl = os.environ.get("USE_SSL", "false").lower() == "true"
+    # ssl_context = ('cert.pem', 'key.pem') if use_ssl else None
+    # app.run(debug=True, port=5000, ssl_context=ssl_context)
+

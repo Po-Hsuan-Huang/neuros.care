@@ -1,0 +1,16 @@
+# Web Framework & Infrastructure
+Flask>=3.1.0
+flask-cors>=5.0.0
+gunicorn>=23.0.0
+python-dotenv>=1.0.1
+
+# Authentication & OAuth
+Flask-Dance>=7.1.0
+blinker>=1.9.0
+
+# AI, Math & Computer Vision
+tensorflow>=2.18.0
+numpy>=1.26.0
+
+# Add your internal utility files like PoseSuggestion.py and auth.py 
+# to your repository; they do not go in this file.
