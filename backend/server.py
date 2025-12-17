@@ -10,13 +10,19 @@ from auth import auth_bp
 
 # Load environment variables from .env file
 load_dotenv()
+# Dynamically set allowed origins based on environment
+env = os.environ.get("APP_ENV", "production")
 
+if env == "development":
+    origins = ["http://localhost:3001","http://localhost:3000", "http://127.0.0.1:3001"]
+else:
+    origins = ["https://dev.neuros.care", "https://neuros.care"]
 print('num GPU available:', len(tf.config.list_physical_devices('GPU')))
 tflite = tf.lite
 app = Flask(__name__, static_folder="dist", static_url_path="")
 CORS(app, resources={
     r"/*": {
-        "origins": ["https://dev.neuros.care", "https://neuros.care", "http://localhost:3001","http://localhost:3000", "http://127.0.0.1:3001"],
+        "origins": origins,
         "methods": ["GET", "POST", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"],
         "supports_credentials": True

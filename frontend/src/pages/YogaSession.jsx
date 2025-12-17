@@ -4,7 +4,7 @@ import WebcamStream from '../components/WebcamStream';
 import FeedbackPanel from '../components/FeedbackPanel';
 import PoseGuide from '../components/PoseGuide';
 import PsychedelicSmoke from '../components/PsychedelicSmoke';
-
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 const YogaSession = () => {
   const [feedback, setFeedback] = useState(null);
   const [poseData, setPoseData] = useState(null);
@@ -23,7 +23,7 @@ const YogaSession = () => {
   };
 
   const sendPoseDataToServer = async (poseData, selectedPose) => {
-    const res = await fetch('http://localhost:5000/api/classify-pose', {
+    const res = await fetch(`${API_BASE_URL}/api/classify-pose`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

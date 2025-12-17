@@ -4,8 +4,10 @@ import GoogleIcon from '@mui/icons-material/Google';
 import { useUserContext } from '../context/UserContext';
 
 // Define the URL for your Flask-Dance login blueprint
-const LOGIN_URL = "http://localhost:5000/google_login";
-
+// This will automatically be "http://localhost:5000" on your computer
+// and "https://neuros-backend.onrender.com" on Render/GitHub Pages.
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+const LOGIN_URL = `${API_BASE_URL}/google_login`;
 function GoogleLoginButton() {
   const { username } = useUserContext();
 
