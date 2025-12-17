@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, LoadingButton, Box, Typography } from '@mui/material';
+import { Button, Box, Typography } from '@mui/material';
+import { LoadingButton } from '@mui/lab';              // Use named import from lab root
 import GoogleIcon from '@mui/icons-material/Google';
 import { useUserContext } from '../context/UserContext';
 
