@@ -1,6 +1,5 @@
 import React from 'react';
-import { Button, Box, Typography } from '@mui/material';
-import LoadingButton from '@mui/lab/LoadingButton';
+import { Button, LoadingButton, Box, Typography } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import { useUserContext } from '../context/UserContext';
 
