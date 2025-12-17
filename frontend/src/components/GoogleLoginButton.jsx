@@ -52,7 +52,7 @@ function GoogleLoginButton({ isWakingUp }) {
         }}
       >
         {isWakingUp ? 'Waking up servers...' : 'Sign in with Google'}
-      </Button>
+      </LoadingButton>
 
       <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary', maxWidth: 400, mx: 'auto' }}>
         Securely sign in to access your personalized yoga journey and track your progress.
