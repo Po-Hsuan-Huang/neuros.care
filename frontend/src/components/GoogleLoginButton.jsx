@@ -8,7 +8,7 @@ import { useUserContext } from '../context/UserContext';
 // and "https://neuros-backend.onrender.com" on Render/GitHub Pages.
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 const LOGIN_URL = `${API_BASE_URL}/google_login`;
-function LoadingButton({ isWakingUp }) {
+function GoogleLoginButton({ isWakingUp }) {
   const { username } = useUserContext();
   const handleLogin = () => {
     // Redirect to your Flask-Dance login route
@@ -60,4 +60,4 @@ function LoadingButton({ isWakingUp }) {
   );
 }
 
-export default LoadingButton;
+export default GoogleLoginButton;
