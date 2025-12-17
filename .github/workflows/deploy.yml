@@ -1,4 +1,3 @@
-# .github/workflows/deploy.yml
 name: Deploy to GitHub Pages
 
 on:
@@ -10,6 +9,11 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    # This tells GitHub to run all 'run' commands inside the frontend folder
+    defaults:
+      run:
+        working-directory: frontend
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -18,6 +22,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          # This ensures the cache looks for the lockfile inside the frontend folder
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
@@ -25,46 +32,28 @@ jobs:
       - name: Build Project
         run: npm run build
 
-      # 🔍 Confirm build output exists
+      # 🔍 Confirm build output exists (Path updated to frontend/dist)
       - name: Check dist directory
+        working-directory: . # Temporarily reset to root to see the full path
         run: |
           echo "Current directory:"
           pwd
-          echo "List root files:"
-          ls -la
-          echo "List dist directory:"
-          ls -la dist || echo "❌ dist directory not found"
+          echo "List frontend/dist directory:"
+          ls -la frontend/dist || echo "❌ dist directory not found"
 
-      # 🔍 Print ALL files that will be deployed
-      - name: Print files to be deployed
-        run: |
-          echo "Files to be deployed from dist:"
-          find dist -type f
-          
-      - name: Print file timestamps (mtime)
-        run: |
-          echo "File modification times in dist:"
-          find dist -type f -exec stat --format='%y  %n' {} \;   
-
-      - name: Deep inspect dist
-        run: |
-          echo "Tree:"
-          find dist -maxdepth 3 -print
-          echo "Disk usage:"
-          du -ah dist
-
-      # 📦 Optional: Upload build output as artifact (VERY helpful)
+      # 📦 Upload build output as artifact
       - name: Upload dist as artifact
         uses: actions/upload-artifact@v4
         with:
           name: dist-build
-          path: dist
+          path: frontend/dist
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          # Path updated to point to the build folder inside frontend
+          publish_dir: ./frontend/dist
           publish_branch: gh-pages
           cname: neuros.care
           force_orphan: true
