@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, Box, Typography } from '@mui/material';
-import { LoadingButton } from '@mui/lab';              // Use named import from lab root
 import GoogleIcon from '@mui/icons-material/Google';
 import { useUserContext } from '../context/UserContext';
 
@@ -27,7 +26,7 @@ function GoogleLoginButton({ isWakingUp }) {
 
   return (
     <Box sx={{ textAlign: 'center', mt: 4 }}>
-      <LoadingButton
+      <Button
         variant="contained"
         size="large"
         onClick={handleLogin}
@@ -52,7 +51,7 @@ function GoogleLoginButton({ isWakingUp }) {
         }}
       >
         {isWakingUp ? 'Waking up servers...' : 'Sign in with Google'}
-      </LoadingButton>
+      </Button>
 
       <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary', maxWidth: 400, mx: 'auto' }}>
         Securely sign in to access your personalized yoga journey and track your progress.
