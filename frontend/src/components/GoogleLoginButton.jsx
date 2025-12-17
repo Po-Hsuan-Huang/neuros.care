@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Box, Typography } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
 import GoogleIcon from '@mui/icons-material/Google';
 import { useUserContext } from '../context/UserContext';
 
@@ -8,9 +9,12 @@ import { useUserContext } from '../context/UserContext';
 // and "https://neuros-backend.onrender.com" on Render/GitHub Pages.
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 const LOGIN_URL = `${API_BASE_URL}/google_login`;
-function GoogleLoginButton() {
+function GoogleLoginButton({ isWakingUp }) {
   const { username } = useUserContext();
-
+  const handleLogin = () => {
+    // Redirect to your Flask-Dance login route
+    window.location.href = LOGIN_URL;
+  };
   if (username) {
     return (
       <Box sx={{ textAlign: 'center', p: 3 }}>
@@ -23,11 +27,13 @@ function GoogleLoginButton() {
 
   return (
     <Box sx={{ textAlign: 'center', mt: 4 }}>
-      <Button
+      <LoadingButton
         variant="contained"
         size="large"
-        href={LOGIN_URL}
+        onClick={handleLogin}
         startIcon={<GoogleIcon />}
+        loading={isWakingUp}
+        loadingPosition="start"
         sx={{
           background: 'linear-gradient(45deg, #4285F4 30%, #34A853 90%)',
           color: 'white',
@@ -45,7 +51,7 @@ function GoogleLoginButton() {
           }
         }}
       >
-        Sign in with Google
+        {isWakingUp ? 'Waking up servers...' : 'Sign in with Google'}
       </Button>
 
       <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary', maxWidth: 400, mx: 'auto' }}>
