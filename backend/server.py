@@ -51,7 +51,7 @@ def ping():
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1" 
 
 # Load the pose classifier model
-interpreter = tflite.Interpreter(model_path="src/components/pose_classifier_30.tflite")
+interpreter = tflite.Interpreter(model_path="pose_classifier_30.tflite")
 interpreter.allocate_tensors()
 
 input_details = interpreter.get_input_details()
