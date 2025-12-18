@@ -8,6 +8,22 @@ from PoseSuggestion import suggest_corrections, compute_joint_angles, normalize_
 import time
 from auth import auth_bp
 
+# ============================================================================
+# DATABASE IMPORTS - Patient Monitoring System
+# ============================================================================
+# Import database configuration and API routes
+# These provide PostgreSQL integration for patient rehabilitation tracking
+try:
+    from database import get_db, test_connection
+    from api_routes import register_patient_routes
+    from api_routes_extended import register_pose_and_analytics_routes
+    DATABASE_ENABLED = True
+    print("✅ Database modules loaded successfully")
+except ImportError as e:
+    DATABASE_ENABLED = False
+    print(f"⚠️  Database not configured: {e}")
+    print("   Run 'pip install -r requirements.txt' to install database dependencies")
+
 # Load environment variables from .env file
 load_dotenv()
 # Dynamically set allowed origins based on environment
@@ -23,7 +39,7 @@ app = Flask(__name__, static_folder="dist", static_url_path="")
 CORS(app, resources={
     r"/*": {
         "origins": origins,
-        "methods": ["GET", "POST", "OPTIONS"],
+        "methods": ["GET", "POST", "PUT", "OPTIONS"],  # Added PUT for updates
         "allow_headers": ["Content-Type", "Authorization"],
         "supports_credentials": True
     }
@@ -35,9 +51,26 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY")
 if not app.secret_key:
     print("WARNING: FLASK_SECRET_KEY not found. Using default for development.")
     app.secret_key = "dev_secret_key_fallback"
-# Register the blueprint.
+
+# ============================================================================
+# REGISTER BLUEPRINTS AND API ROUTES
+# ============================================================================
+# Register the authentication blueprint
 # The url_prefix means all routes in auth.py (like /welcome) will start with /login
 app.register_blueprint(auth_bp)
+
+# Register database API routes if database is enabled
+if DATABASE_ENABLED:
+    register_patient_routes(app)
+    register_pose_and_analytics_routes(app)
+    print("✅ Patient monitoring API routes registered")
+    
+    # Test database connection on startup
+    if test_connection():
+        print("✅ Database connection verified")
+    else:
+        print("⚠️  Database connection failed - check your .env configuration")
+
 # --- Other Routes ---
 @app.route("/")
 def home():
