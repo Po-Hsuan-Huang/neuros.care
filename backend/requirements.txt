@@ -8,7 +8,12 @@ python-dotenv>=1.0.1
 Flask-Dance>=7.1.0
 blinker>=1.9.0
 pyOpenSSL>=24.0.0
+
+# Database - PostgreSQL & ORM
+psycopg2-binary>=2.9.9  # PostgreSQL adapter for Python
+SQLAlchemy>=2.0.23      # ORM for database operations
+alembic>=1.13.0         # Database migrations
+
 # AI, Math & Computer Vision
 tensorflow>=2.18.0
 numpy>=1.26.0
-
