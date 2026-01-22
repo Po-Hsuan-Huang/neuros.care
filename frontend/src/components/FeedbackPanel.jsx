@@ -70,6 +70,12 @@ const FeedbackPanel = ({ feedback, onDetected }) => {
     console.log("speak text confidence level: ", confidenceLevel)
   }, [confidenceLevel]);
 
+  useEffect(() => {
+    if (feedback?.llm_instruction) {
+      speakText(feedback.llm_instruction);
+    }
+  }, [feedback?.llm_instruction]);
+
   // Helpers: categorize correction text to icon/color
   const getCorrectionMeta = (text) => {
     if (!text || typeof text !== 'string') return { icon: <WarningAmberIcon />, color: 'warning' };
@@ -136,6 +142,17 @@ const FeedbackPanel = ({ feedback, onDetected }) => {
                   );
                 })}
               </Stack>
+            )}
+
+            {feedback.llm_instruction && (
+              <Box sx={{ mt: 2, p: 1.5, borderRadius: 2, bgcolor: 'rgba(255, 255, 255, 0.05)', borderLeft: '4px solid #9c27b0' }}>
+                <Typography variant="body2" sx={{ fontStyle: 'italic', color: 'secondary.light', mb: 0.5 }}>
+                  AI Guidance:
+                </Typography>
+                <Typography variant="body1">
+                  {feedback.llm_instruction}
+                </Typography>
+              </Box>
             )}
 
             {feedback.class_name && (

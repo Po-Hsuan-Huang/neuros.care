@@ -1,6 +1,9 @@
 import os
 import json
 import numpy as np
+import openai
+from typing import Optional
+import random
 from typing import Dict, List, Tuple, Optional
 
 # ------------------------------
@@ -401,4 +404,78 @@ def suggest_corrections(keypoints: List[Dict], target_pose: Optional[str]) -> Tu
 
     # Deduplicate suggestions
     suggestions = list(dict.fromkeys(suggestions))
-    return suggestions, angles
+    
+    # Generate LLM instruction if possible
+    llm_instruction = None
+    if suggestions and target_pose:
+        # For now, just take the first suggestion to analyze
+        # In a real scenario, we might want to send all corrections
+        try:
+            # Extract joint and deviation from the first suggestion or use raw data
+            # Here we'll use a simplified version of the user's provided logic
+            # to format the input for the LLM
+            
+            # Find the most significant deviation
+            max_dev = 0
+            target_joint = None
+            target_range = None
+            current_angle = None
+            
+            if profile:
+                for joint, rng in profile.items():
+                    angle = angles.get(joint)
+                    if angle is not None:
+                        dev = abs(angle - (rng[0] + rng[1]) / 2)
+                        if dev > max_dev:
+                            max_dev = dev
+                            target_joint = joint
+                            target_range = rng
+                            current_angle = angle
+            
+            if target_joint:
+                llm_input = f"Pose: {target_pose}\nJoint: {target_joint}\nCurrent Angle: {current_angle:.1f}°\nTarget Range: {target_range[0]}° - {target_range[1]}°\nDeviation: {current_angle - (target_range[0]+target_range[1])/2:+.1f}°"
+                llm_instruction = call_hf_yoga_api(llm_input)
+        except Exception as e:
+            print(f"Error generating LLM instruction: {e}")
+
+    return suggestions, angles, llm_instruction
+
+def call_hf_yoga_api(input_text: str) -> Optional[str]:
+    """
+    Call the Hugging Face Space API using the OpenAI client.
+    Requires the Space to be running vLLM or llama-cpp-python server.
+    """
+    # 1. Point to your Space URL with "/v1" at the end
+    # Note: Remove "/run/predict" from your old URL
+    HF_SPACE_URL = "https://pohsaunh-qwen3-0-6b-vllm-yoga.hf.space/v1"
+    
+    # 2. Initialize Client
+    # API key is ignored by default on public HF Spaces, but library requires a string.
+    client = OpenAI(
+        base_url=HF_SPACE_URL,
+        api_key="empty_key" 
+    )
+    
+    # 3. Format the Prompt
+    # (vLLM usually handles the chat formatting automatically, so we send messages)
+    full_prompt = (
+            "### Instruction:\n"
+            "Analyze the following yoga pose data and provide empathetic, instructional feedback.\n\n"
+            f"{input_text}\n\n"
+            "### Response:\n"
+        )
+    
+    try:
+        response = client.chat.completions.create(
+            model="Qwen/Qwen2.5-0.5B-Instruct", # Must match the model name in your Dockerfile
+            messages=[{"role": "user", "content": full_prompt}],
+            max_tokens=500,
+            temperature=0.7
+        )
+        
+        # Extract the content
+        return response.choices[0].message.content
+        
+    except Exception as e:
+        print(f"OpenAI API Error: {e}")
+        return None

@@ -229,7 +229,7 @@ def classify_pose():
                         "needs improvement"
         
         # Derive pose corrections and joint angles
-        corrections, joint_angles = suggest_corrections(keypoints, target_pose)
+        corrections, joint_angles, llm_instruction = suggest_corrections(keypoints, target_pose)
 
         result = {
             "class_no": class_no,
@@ -239,7 +239,8 @@ def classify_pose():
             "confidenceLevel": feedback_level,
             "raw_predictions": output_data[0].tolist(),
             "joint_angles": joint_angles,
-            "corrections": corrections
+            "corrections": corrections,
+            "llm_instruction": llm_instruction
         }
 
         print('preview result before sending to client.')
