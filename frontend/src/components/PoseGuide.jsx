@@ -26,15 +26,15 @@ import {
   ArrowBack,
 } from '@mui/icons-material';
 
-import{speakText} from './utils/speechUtils'
-import{CountdownStep, CountdownBreathCycle} from './utils/countdownUtils.jsx'
-import { useUserContext } from '../context/UserContext';
-import { useSnapshotContext } from '../context/SnapshotContext';
+import { speakText } from './utils/speechUtils.js'
+import { CountdownStep, CountdownBreathCycle } from './utils/countdownUtils.jsx'
+import { useUserContext } from '../context/UserContext.jsx';
+import { useSnapshotContext } from '../context/SnapshotContext.jsx';
 import { useSnapshotQueue } from './utils/useSnapshotQueue.jsx';
 // PoseGuide.jsx
 // Add this at the top of your file after the imports
 const POSES = {
-  Half_Moon : {
+  Half_Moon: {
     name: "Half Moon Pose (Ardha Chandrasana)",
     difficulty: "Intermediate",
     duration: "3–8 breaths",
@@ -275,12 +275,12 @@ const PoseGuide = ({ selectedPose, videoRef }) => {
   const beepRef = useRef(null);
   const { addSnapshot } = useSnapshotContext();
 
-  useEffect(() => {setActiveStep(0);}, [selectedPose]);
+  useEffect(() => { setActiveStep(0); }, [selectedPose]);
 
   //Sequence of effects.Allow 5 second for the speech to finish before the next step. 
   useEffect(() => {
     setIsSpeakTexting(true);
-    speakText(currentPose.steps[activeStep]);  
+    speakText(currentPose.steps[activeStep]);
     setTimeout(() => {
       setIsCountingDown(true);
       setIsSpeakTexting(false);
@@ -292,15 +292,15 @@ const PoseGuide = ({ selectedPose, videoRef }) => {
     await takeSnapshot();
     // Maybe advance to next step here?
   };
-  
+
   const takeSnapshot = () => {
     if (!videoRef?.current) {
       console.warn("videoRef is not available");
       return;
     }
-  
+
     const video = videoRef.current;
-  
+
     // Create a temporary canvas
     const tempCanvas = document.createElement("canvas");
     tempCanvas.width = video.videoWidth;
@@ -314,7 +314,7 @@ const PoseGuide = ({ selectedPose, videoRef }) => {
     console.log("video.readyState", video.readyState);
     const ctx = tempCanvas.getContext("2d");
     ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
-  
+
     tempCanvas.toBlob((blob) => {
       if (blob) {
         addSnapshot(blob, currentPose.name);
@@ -332,7 +332,7 @@ const PoseGuide = ({ selectedPose, videoRef }) => {
       return nextStep;
     });
   };
-  
+
   const handleBack = () => {
     setActiveStep((prev) => {
       const prevStep = prev - 1;
@@ -351,7 +351,7 @@ const PoseGuide = ({ selectedPose, videoRef }) => {
         <Typography variant="h4" component="h1" gutterBottom>
           {currentPose.name}
         </Typography>
-        
+
         <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
           <Chip
             icon={<FitnessCenter />}
@@ -392,26 +392,26 @@ const PoseGuide = ({ selectedPose, videoRef }) => {
               <StepLabel>
                 <Typography variant="subtitle1">Step {index + 1}</Typography>
               </StepLabel>
-              
+
               {/* Only render countdown for the active step */}
               {index === activeStep && isCountingDown === true && (
                 <CountdownStep onComplete={handleCountdownComplete} activeStep={index + 1} />
               )}
-              
+
               {/* Only render countdown for breath cycles for the last active step */}
-              
+
               <audio ref={beepRef} src="/beep.mp3" preload="auto" />
 
-              {index === activeStep && isCountingDown === false && isSpeakText=== false && index === currentPose.steps.length - 1 && (
-              <CountdownBreathCycle
-                activeStep={activeStep}
-                isLastStep={index === currentPose.steps.length - 1}
-                duration={5}
-                beepRef={beepRef}
-                
-              />
+              {index === activeStep && isCountingDown === false && isSpeakText === false && index === currentPose.steps.length - 1 && (
+                <CountdownBreathCycle
+                  activeStep={activeStep}
+                  isLastStep={index === currentPose.steps.length - 1}
+                  duration={5}
+                  beepRef={beepRef}
+
+                />
               )}
-              
+
               <StepContent>
                 <Typography>{step}</Typography>
                 <Box sx={{ mb: 2, mt: 1 }}>

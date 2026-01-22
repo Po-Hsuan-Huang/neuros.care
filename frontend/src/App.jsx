@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'; // Added missing imports
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { ThemeProvider, CircularProgress, Box, Typography } from '@mui/material'; // Added UI parts
+import { ThemeProvider, CircularProgress, Box, Typography } from '@mui/material';
 import { theme } from './theme';
 import Layout from './components/Layout';
 import Home from './pages/Home';
